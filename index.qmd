@@ -1,5 +1,6 @@
 ---
-title: "tj_blog"
+title: "Statistical Data Science"
+subtitle: 'Statistics, Data Science, and the pursuit of "Why"'
 listing:
   contents: posts
   sort: "date desc"
