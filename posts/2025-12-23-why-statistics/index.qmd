@@ -4,7 +4,7 @@ subtitle: "comment1"
 description: "comment2"
 author: "Taejun Park"
 date: "2025-12-23"
-categories: [Opinion, Statistics, Data Science]
+categories: [OPINION, STATISTICS, DATA SCIENCE]
 image: "image.jpg" 
 format:
   html:
@@ -15,4 +15,4 @@ format:
 draft: false              # 작성 중일 땐 true, 배포할 땐 false
 ---
 
-# 통계학을 공부하며 멋모르고 Machine Learing부터 팠다
+# 통계학을 공부하며 멋모르고 Machine Learing부터 열심히 팠다

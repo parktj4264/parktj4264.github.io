@@ -4,7 +4,7 @@
     "href": "index.html",
     "title": "Statistical Data Science",
     "section": "",
-    "text": "왜 모두가 AI에 미쳐있을 때, 나는 통계를 다시 파는가?\n\n\n화려한 툴(Tool)의 시대를 넘어, 데이터의 본질을 꿰뚫는 엔지니어링에 대하여\n\n\n\nOpinion\n\nStatistics\n\nData Science\n\n\n\n남들이 최신 LLM과 라이브러리에 열광할 때, 나는 왜 다시 수리통계학과 앤드류 겔만(Andrew Gelman)의 베이지안 철학을 탐구하는가? 현업 데이터 사이언티스트로서의 성찰과 다짐.\n\n\n\n\n\nDec 24, 2025\n\n\nTaejun Park\n\n\n\n\n\n\n\n\n\n\n\n\nPost With Code\n\n\n\n\n\n\nnews\n\ncode\n\nanalysis\n\n\n\n\n\n\n\n\n\nNov 19, 2025\n\n\nHarlow Malloc\n\n\n\n\n\n\n\n\n\n\n\n\nWelcome To My Blog\n\n\n\n\n\n\nnews\n\n\n\n\n\n\n\n\n\nNov 16, 2025\n\n\nTristan O’Malley\n\n\n\n\n\nNo matching items"
+    "text": "나는 왜 통계를 다시 파는가\n\n\ncomment1\n\n\n\nOpinion\n\nStatistics\n\nData Science\n\n\n\ncomment2\n\n\n\n\n\nDec 23, 2025\n\n\nTaejun Park\n\n\n\n\n\n\n\n\n\n\n\n\nPost With Code\n\n\n\n\n\n\nnews\n\ncode\n\nanalysis\n\n\n\n\n\n\n\n\n\nNov 19, 2025\n\n\nHarlow Malloc\n\n\n\n\n\n\n\n\n\n\n\n\nWelcome To My Blog\n\n\n\n\n\n\nnews\n\n\n\n\n\n\n\n\n\nNov 16, 2025\n\n\nTristan O’Malley\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "posts/post-with-code/index.html",
@@ -26,5 +26,12 @@
     "title": "Welcome To My Blog",
     "section": "",
     "text": "This is the first post in a Quarto blog. Welcome!\n\nSince this post doesn’t specify an explicit image, the first image in the post will be used in the listing page of posts.\n테스트도합니다! 감사합니다!"
+  },
+  {
+    "objectID": "posts/2025-12-23-why-statistics/index.html",
+    "href": "posts/2025-12-23-why-statistics/index.html",
+    "title": "나는 왜 통계를 다시 파는가",
+    "section": "",
+    "text": "1 통계학을 공부하며 멋모르고 Machine Learing부터 열심히 팠다"
   }
 ]
