@@ -16,3 +16,5 @@ draft: false              # 작성 중일 땐 true, 배포할 땐 false
 ---
 
 # 통계학을 공부하며 멋모르고 Machine Learing부터 열심히 팠다
+
+dfzxzxzx
