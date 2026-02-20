@@ -3,11 +3,17 @@
 
 body {
   font-family: 'Noto Sans KR', sans-serif;
-  background-color: #f8f9fa; /* Light gray background for less eye strain */
+  background-color: #f8f9fa;
+  /* Light gray background for less eye strain */
   color: #333;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: 'Noto Sans KR', sans-serif;
   font-weight: 700;
   color: #2c3e50;
@@ -15,7 +21,7 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Navbar enhancements */
 .navbar {
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .navbar-brand {
@@ -25,26 +31,26 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Post list styling */
 .quarto-listing-default .quarto-post {
-    transition: transform 0.2s ease-in-out;
-    border-radius: 8px;
-    padding: 15px;
-    background: white;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-    margin-bottom: 20px;
+  transition: transform 0.2s ease-in-out;
+  border-radius: 8px;
+  padding: 15px;
+  background: white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  margin-bottom: 20px;
 }
 
 .quarto-listing-default .quarto-post:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  transform: translateY(-3px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 a {
-    color: #3498db;
-    text-decoration: none;
-    transition: color 0.2s;
+  color: #3498db;
+  text-decoration: none;
+  transition: color 0.2s;
 }
 
 a:hover {
-    color: #2980b9;
-    text-decoration: underline;
+  color: #2980b9;
+  text-decoration: underline;
 }
