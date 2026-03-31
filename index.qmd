@@ -1,6 +1,6 @@
 ---
 title: "Statistical Data Science"
-subtitle: 'Statistics, Data Science, and the pursuit of "Why"'
+subtitle: 'Statistics, Data Science, and Thinking with Data'
 listing:
   contents: posts
   sort: "date desc"

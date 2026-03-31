@@ -1,6 +1,9 @@
 project:
   type: website
   output-dir: docs
+  render:
+    - "**/*.qmd"
+    - "!private-notes/**"
 
 website:
   title: "T.J.PARK BLOG"
@@ -8,9 +11,7 @@ website:
     right:
       - about.qmd
       - icon: github
-        href: https://github.com/
-      - icon: twitter
-        href: https://twitter.com
+        href: https://github.com/parktj4264
 format:
   html:
     theme: litera
