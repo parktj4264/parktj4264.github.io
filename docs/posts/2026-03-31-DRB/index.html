@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.26">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Taejun Park">
+<meta name="dcterms.date" content="2026-03-31">
+<meta name="description" content="반도체 데이터 AB-Test 지표 고찰">
+
+<title>반도체 데이터분석과 AB-Test – T.J.PARK BLOG</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-d1897f967d4dc882e6c3c4aa210b578e.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-fixed fullcontent quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">T.J.PARK BLOG</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/parktj4264"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">반도체 데이터분석과 AB-Test</h1>
+                  <div>
+        <div class="description">
+          반도체 데이터 AB-Test 지표 고찰
+        </div>
+      </div>
+                          <div class="quarto-categories">
+                <div class="quarto-category">Statistics</div>
+                <div class="quarto-category">Data Science</div>
+                <div class="quarto-category">DRB</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Taejun Park </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">March 31, 2026</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+
+<p>나는 메모리 반도체<em>(특히 Nand Flash)</em>를 평가하고 분석하는 팀에 있다. 정말 말 그대로 반도체를 만들고나면 고객에게 반도체를 팔기위해 여러 Test를 한다. 여기서 많이들 들어봤을 <strong>수율</strong>이라는 개념이 나온다.</p>
+<p>이때, 정말 많은 데이터들이 나오는데 나는 이 평가를 하며 나오는 <strong>모든 데이터</strong>를 통계적인 시각에서 보는 그룹에 속해있다. EDS 같은 전기적 테스트 데이터, Chip 수준 품질 지표, Nand의 Block 패턴처럼 Wafer와 Chip에서의 벌어지는 일을 드러내는 신호 데이터들이 주요 대상이다. 이 데이터는 물량 선별<em>(Wafer와 Chip의 Tier를 매긴다. 마치 Regression/Inference)</em>, 물량 공급 판단, 불량 대응 같은 업무에도 쓰이고, 기존 조건의 데이터와 새로운 개발 물량의 새로운 조건에서의 데이터를 비교하는 리뷰 업무도 진행한다.</p>
+<p><img src="images/paste-2.png" class="img-fluid" width="300"></p>
+<section id="data-review-board" class="level2">
+<h2 class="anchored" data-anchor-id="data-review-board">1. Data Review Board</h2>
+<p>다른 데이터 조직과 마찬가지로 이곳에서도 AB-Test를 진행한다. 공정이 바뀌었거나 생산 설비라인을 바꾼다거나.. 모든 것은 돈이기에 함부로 진행할 수는 없다. 모두 Risk를 확인해보아야한다. 우리 데이터 그룹은 이 과정에서 Test에서 나오는 모든 데이터를 비교해보는 업무를 통해 Risk를 확인한다. 우리 데이터 그룹에서는 이런 리뷰 업무의 한 축을 Data Review Board(DRB)라고 부른다. 이름은 좀 거창하지만, 실무 질문은 사실 심플하다. <strong>새 조건이 기준 조건에서 의미 있게 벗어났는가?</strong></p>
+<p><img src="images/paste-1.png" class="img-fluid" width="347"></p>
+<p>조금 더 풀어 쓰면 이렇다. reference는 우리가 이미 충분히 성격과 Risk를 파악한 기준 물량이고, target은 새 공정이든 설비이든, 어쨌든 Total 리뷰가 필요한 집단이다. DRB에서 해야 하는 일은 둘의 차이를 숫자로 보고, 그 차이가 실제로 엔지니어가 신경 써야 할 수준인지 판단하여 이슈하는 것이다.</p>
+<p>이 지점에서 DRB는 품질 리뷰이면서 동시에 통계 문제이기도 하다. 기준선이 있고, 비교 대상이 있고, 평균이 달라질 수 있고, 산포도 달라질 수 있고, 마지막에는 이걸 받아들일지 말지를 결정해야 한다. 아주 실무적인 일처럼 보이지만, 뼈대를 벗겨 보면 꽤 정통 통계 문제다.</p>
+<blockquote class="blockquote">
+<p>여기서 사실 반도체 공정 데이터만이 가지고있는 특성들도 당연히 있다. 1. Spatial 2. 표본 모으기가 정말 힘들다 / IT 플랫폼처럼 아름답고도 많은 비교군 대조군을 형성하기 힘들다. 돈이 정말 많이 든다. 이러한 특성 하에서도 생각할 거리가 많다.</p>
+</blockquote>
+</section>
+<section id="이거-어디서-많이-봤다-two-sample-test다" class="level2">
+<h2 class="anchored" data-anchor-id="이거-어디서-많이-봤다-two-sample-test다">2. 이거, 어디서 많이 봤다… Two-Sample Test다!</h2>
+<p>이 구조, 어디서 많이 봤는데? 🤔</p>
+<p><img src="images/paste-3.png" class="img-fluid" width="150"></p>
+<p>Reference와 Target, 두 집단 비교, 평균 차이, 변동성, 판단. 결국 뼈대만 보면 Two-Sample Test, 넓~게 말하면 AB-Test다. 물론 우리가 하는 일은 전형적인 프로덕트 실험과는 다르다. 거기서는 보통 “두 집단이 다른가?”가 중심 질문이지만, 여기서는 “타깃이 기준선에서 얼마나 이탈했는가?”가 더 중요하다. 그래도 통계적 골격 자체는 분명 익숙하다.</p>
+<p>이상했다. Textbook에서 보던 도구들이 당연히 중심에 있을 거라고 생각했다. T-Test, P-Value, Pooled Standard Deviation을 이용한 Standardized Difference 같은 것들 말이다. 실제로 Standardized Mean Difference는 원래 두 집단 비교에서 널리 쓰이는 효과크기 지표이고, 정규·등분산 상황에서는 해석도 가장 자연스럽다.</p>
+<p><span class="math display">\[d = \frac{\mu_{\text{target}} - \mu_{\text{reference}}}{\sigma_{\text{pooled}}}\]</span></p>
+<p>where</p>
+<p><span class="math display">\[\left( \sigma_{\text{pooled}} = \sqrt{\frac{(n_T - 1)\sigma_{\text{target}}^2 + (n_R - 1)\sigma_{\text{reference}}^2}{n_T + n_R - 2}} \right)\]</span></p>
+<p>문제는 DRB의 질문이 애초에 그 교과서적 상황과 완전히 같지는 않다는 점이다. 우리에게 Reference는 그냥 “비교군 A”가 아니라 기준선이고, Target은 평균만 바뀌는 집단이 아니라 산포까지 흔들릴 수 있는 리뷰 대상이다.</p>
+</section>
+<section id="기존-접근-이름은-없지만-모두가-쓰던-지표" class="level2">
+<h2 class="anchored" data-anchor-id="기존-접근-이름은-없지만-모두가-쓰던-지표">3. 기존 접근: 이름은 없지만 모두가 쓰던 지표</h2>
+<section id="우리는-pooled-sd를-쓰지-않았다" class="level3">
+<h3 class="anchored" data-anchor-id="우리는-pooled-sd를-쓰지-않았다">우리는 Pooled SD를 쓰지 않았다</h3>
+<p>하루하루 반복적인 업무를 하다보니 어느 순간 이런 생각이들었다. <strong>“잠깐, 엥? 우리 왜 이 지표를 이렇게 쓰지?”</strong></p>
+<p>데이터 그룹 현업에서 모두가 그냥 쓰던 지표를 다시 봐봤다. 분모가 예상과 달랐다. 두 집단의 변동성을 합쳐 쓴 pooled SD가 아니라, 오직 Reference 집단의 표준편차만 들어가 있었다. 정식 이름을 붙여 설명하는 사람은 거의 없었지만, 다들 그 지표를 그냥 썼다. 이유를 물어보면 돌아오는 답은 통계적인 답이 아니었다. 완전히 현업 언어였다. “Target 조건의 산포가 튀면, 그걸 분모에 섞는 순간 점수가 좀.. 직아집니다. 놓치는 지수들이 생겨요.”</p>
+<p>이 말은 그냥 정확하다. Target이 불안정해졌다면, 그 불안정성은 우리가 풀어야 하는 문제의 일부다. 그런데 그 Noisy함을 분모에 함께 넣어버리면, 오히려 변화가 덜 심각해 보일 수 있다. 엔지니어 입장에서는 찝찝하다.</p>
+<p>수학과 출신인 나에게 이 지표는 “이름 없는 관습”이 아니라 “뭔가 통계학적으로 정체가 있을 것 같은 지표”처럼 보이기 시작했다.</p>
+</section>
+</section>
+<section id="사내-지표를-역설계해-보니-glasss-delta였다" class="level2">
+<h2 class="anchored" data-anchor-id="사내-지표를-역설계해-보니-glasss-delta였다">4. 사내 지표를 역설계해 보니 Glass’s Delta였다</h2>
+<p>집에 와서 AI들과 함께 살짝 더 파고들어 보니, 이 사내 지표는 사실 이미 통계학에 이름이 붙어 있었다. 바로 <strong>Glass’s Delta</strong>다.</p>
+<p><span class="math display">\[\Delta_{\text{Glass}} =
+\frac{\mu_{\text{target}}-\mu_{\text{reference}}}{\sigma_{\text{reference}}}\]</span></p>
+<p>Glass’s Delta는 Control 또는 Reference 그룹의 표준편차를 분모로 쓰는 효과크기다. 반면 Cohen류의 익숙한 Standardized Mean Difference는 보통 두 집단의 Pooled Standard Deviation을 쓴다. 즉, 겉보기엔 “분모를 어떻게 둘까”의 문제처럼 보여도, 실제로는 무슨 잣대로 변화를 재고 있느냐의 문제다. Glass가 Control/Reference 쪽 SD를 쓰는 이유도, 여러 Treatment가 Control과 비교될 때 Control Variability를 기준 잣대로 두고 싶다는 데 있었다.</p>
+<p>여기서 재미있는 건 우리가 새로운 통계를 현장에 가져온 게 아니라는 점이다. 오히려 반대다. 현업 엔지니어들은 이미 이름 없이 그 논리를 쓰고 있었다. Baseline은 기준선으로 남아야 하고, Target의 불안정성이 다름의 크기를 덜 커 보이게 만들어서는 안 된다는 감각. 통계학은 거기에 뒤늦게 명찰을 달아줬을 뿐이다.</p>
+<p>이런 의미에서 진짜 발견은 “Glass’s Delta라는 희귀한 지표를 찾았다”가 아니다. 반도체 데이터 리뷰 Workflow 안에, 이미 Glass’s Delta의 문제의식이 숨어 있었다는 점이 흥미롭다.</p>
+</section>
+<section id="small-simulation" class="level2">
+<h2 class="anchored" data-anchor-id="small-simulation">5. Small Simulation</h2>
+<p>직관을 위해 아주 단순한 시뮬레이션을 생각해보자. 기준 집단(reference)은 안정적인 공정을 나타낸다고 보고, 평균 100, 표준편차 1인 정규분포에서 생성한다. 반면 비교 집단(target)은 평균이 105로 이동했지만 동시에 훨씬 더 noisy해진 상황을 가정하여, 평균 105, 표준편차 8인 정규분포에서 생성한다.</p>
+<p><span class="math display">\[X_{\text{reference}} \sim \mathcal{N}(100, 1^2)\]</span></p>
+<p><span class="math display">\[X_{\text{target}} \sim \mathcal{N}(105, 8^2)\]</span></p>
+<p>이 설정에서 평균 차이(mean difference)는 약 5로 비교적 크다. 중요한 점은, 이 차이를 어떤 표준편차로 나누느냐에 따라 effect size의 해석이 크게 달라진다는 것이다.</p>
+<p>Glass’s Delta는 기준 집단의 표준편차만을 분모로 사용한다. 따라서 이 예시에서는 대략</p>
+<p><span class="math display">\[\Delta_{\text{Glass}} \approx \frac{105 - 100}{1} = 5\]</span></p>
+<p>가 된다. 즉, 안정적인 baseline의 관점에서 보면 target은 기준 상태로부터 매우 크게 벗어난 것이다.</p>
+<p>반면 Cohen’s d는 두 집단의 정보를 합친 pooled standard deviation을 분모로 사용한다. 그런데 여기서는 target 집단의 분산이 매우 크므로, pooled SD 자체가 크게 증가한다. 그 결과 같은 평균 차이를 사용하더라도 effect size는 크게 줄어들며, 실제로 1보다 작은 값으로 떨어질 수 있다. 다시 말해, target의 불안정성이 분모에 흡수되면서 shift 자체가 희석되는 것이다.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>👀 Updated Simulation &amp; Plotting Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(data.table)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(grid)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># ==============================================================================</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Data Generation</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># ==============================================================================</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">2026</span>)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">200</span>L</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>dt <span class="ot">&lt;-</span> <span class="fu">rbindlist</span>(<span class="fu">list</span>(</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.table</span>(<span class="at">Group =</span> <span class="st">"A: Control (Stable Baseline)"</span>, <span class="at">Value =</span> <span class="fu">rnorm</span>(n, <span class="at">mean =</span> <span class="dv">100</span>, <span class="at">sd =</span> <span class="dv">1</span>)),</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.table</span>(<span class="at">Group =</span> <span class="st">"B: Treatment (Shifted + Noisy)"</span>, <span class="at">Value =</span> <span class="fu">rnorm</span>(n, <span class="at">mean =</span> <span class="dv">105</span>, <span class="at">sd =</span> <span class="dv">8</span>))</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>))</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>group_levels <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"A: Control (Stable Baseline)"</span>, <span class="st">"B: Treatment (Shifted + Noisy)"</span>)</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>dt[, Group <span class="sc">:</span><span class="er">=</span> <span class="fu">factor</span>(Group, <span class="at">levels =</span> group_levels)]</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>dt[, x <span class="sc">:</span><span class="er">=</span> <span class="fu">fifelse</span>(Group <span class="sc">==</span> group_levels[<span class="dv">1</span>], <span class="dv">1</span>, <span class="dv">2</span>)]</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="co"># ==============================================================================</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Statistics</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="co"># ==============================================================================</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>stats <span class="ot">&lt;-</span> dt[, .(</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">n =</span> .N,</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>  <span class="at">Mean =</span> <span class="fu">mean</span>(Value),</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>  <span class="at">SD_Own =</span> <span class="fu">sd</span>(Value)</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>), by <span class="ot">=</span> .(Group, x)]</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>mean_A <span class="ot">&lt;-</span> stats[Group <span class="sc">==</span> group_levels[<span class="dv">1</span>], Mean]</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>mean_B <span class="ot">&lt;-</span> stats[Group <span class="sc">==</span> group_levels[<span class="dv">2</span>], Mean]</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>sd_ref <span class="ot">&lt;-</span> stats[Group <span class="sc">==</span> group_levels[<span class="dv">1</span>], SD_Own]</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>sd_pooled <span class="ot">&lt;-</span> <span class="fu">with</span>(stats, <span class="fu">sqrt</span>(<span class="fu">sum</span>((n <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">*</span> SD_Own<span class="sc">^</span><span class="dv">2</span>) <span class="sc">/</span> <span class="fu">sum</span>(n <span class="sc">-</span> <span class="dv">1</span>)))</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>mean_diff <span class="ot">&lt;-</span> mean_B <span class="sc">-</span> mean_A</span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>glass_val <span class="ot">&lt;-</span> mean_diff <span class="sc">/</span> sd_ref</span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>cohen_val <span class="ot">&lt;-</span> mean_diff <span class="sc">/</span> sd_pooled</span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>flag_glass <span class="ot">&lt;-</span> <span class="fu">as.integer</span>(glass_val <span class="sc">&gt;=</span> <span class="dv">1</span>)</span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>flag_cohen <span class="ot">&lt;-</span> <span class="fu">as.integer</span>(cohen_val <span class="sc">&gt;=</span> <span class="dv">1</span>)</span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a><span class="co"># ==============================================================================</span></span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Ruler data </span></span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a><span class="co"># ==============================================================================</span></span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>ruler_dt <span class="ot">&lt;-</span> <span class="fu">data.table</span>(</span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>  <span class="at">type   =</span> <span class="fu">c</span>(<span class="st">"1 Ref SD"</span>, <span class="st">"1 Pooled SD"</span>),</span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>  <span class="at">x      =</span> <span class="fu">c</span>(<span class="dv">3</span>, <span class="fl">3.3</span>), </span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>  <span class="at">center =</span> mean_A,</span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>  <span class="at">ymin   =</span> <span class="fu">c</span>(mean_A <span class="sc">-</span> sd_ref,    mean_A <span class="sc">-</span> sd_pooled),</span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>  <span class="at">ymax   =</span> <span class="fu">c</span>(mean_A <span class="sc">+</span> sd_ref,    mean_A <span class="sc">+</span> sd_pooled),</span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a>  <span class="at">col    =</span> <span class="fu">c</span>(<span class="st">"#0072B2"</span>, <span class="st">"#D55E00"</span>)</span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a>y_min <span class="ot">&lt;-</span> <span class="fu">min</span>(dt<span class="sc">$</span>Value) <span class="sc">-</span> <span class="dv">3</span></span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a>y_max <span class="ot">&lt;-</span> <span class="fu">max</span>(dt<span class="sc">$</span>Value) <span class="sc">+</span> <span class="dv">3</span></span>
+<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a>label_txt <span class="ot">&lt;-</span> <span class="fu">paste0</span>(</span>
+<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Mean Diff = "</span>, <span class="fu">round</span>(mean_diff, <span class="dv">2</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>,</span>
+<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Glass's \u0394 = "</span>, <span class="fu">round</span>(glass_val, <span class="dv">2</span>), <span class="st">"   \u2192 Alarm = "</span>, flag_glass, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>,</span>
+<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Cohen's d = "</span>, <span class="fu">round</span>(cohen_val, <span class="dv">2</span>), <span class="st">"   \u2192 Alarm = "</span>, flag_cohen</span>
+<span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a><span class="co"># ==============================================================================</span></span>
+<span id="cb1-64"><a href="#cb1-64" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Plot</span></span>
+<span id="cb1-65"><a href="#cb1-65" aria-hidden="true" tabindex="-1"></a><span class="co"># ==============================================================================</span></span>
+<span id="cb1-66"><a href="#cb1-66" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(dt, <span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> Value)) <span class="sc">+</span></span>
+<span id="cb1-67"><a href="#cb1-67" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-68"><a href="#cb1-68" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(</span>
+<span id="cb1-69"><a href="#cb1-69" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">fill =</span> Group),</span>
+<span id="cb1-70"><a href="#cb1-70" aria-hidden="true" tabindex="-1"></a>    <span class="at">position =</span> <span class="fu">position_jitter</span>(<span class="at">width =</span> <span class="fl">0.35</span>, <span class="at">height =</span> <span class="dv">0</span>, <span class="at">seed =</span> <span class="dv">2026</span>),</span>
+<span id="cb1-71"><a href="#cb1-71" aria-hidden="true" tabindex="-1"></a>    <span class="at">shape =</span> <span class="dv">21</span>, <span class="at">size =</span> <span class="fl">2.9</span>, <span class="at">stroke =</span> <span class="fl">0.28</span>,</span>
+<span id="cb1-72"><a href="#cb1-72" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">"grey15"</span>, <span class="at">alpha =</span> <span class="fl">0.82</span></span>
+<span id="cb1-73"><a href="#cb1-73" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb1-74"><a href="#cb1-74" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-75"><a href="#cb1-75" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_segment</span>(</span>
+<span id="cb1-76"><a href="#cb1-76" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> stats,</span>
+<span id="cb1-77"><a href="#cb1-77" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">x =</span> x <span class="sc">-</span> <span class="fl">0.20</span>, <span class="at">xend =</span> x <span class="sc">+</span> <span class="fl">0.20</span>, <span class="at">y =</span> Mean, <span class="at">yend =</span> Mean),</span>
+<span id="cb1-78"><a href="#cb1-78" aria-hidden="true" tabindex="-1"></a>    <span class="at">inherit.aes =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb1-79"><a href="#cb1-79" aria-hidden="true" tabindex="-1"></a>    <span class="at">linewidth =</span> <span class="fl">1.3</span>, <span class="at">color =</span> <span class="st">"black"</span></span>
+<span id="cb1-80"><a href="#cb1-80" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb1-81"><a href="#cb1-81" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-82"><a href="#cb1-82" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(</span>
+<span id="cb1-83"><a href="#cb1-83" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> stats,</span>
+<span id="cb1-84"><a href="#cb1-84" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> Mean),</span>
+<span id="cb1-85"><a href="#cb1-85" aria-hidden="true" tabindex="-1"></a>    <span class="at">inherit.aes =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb1-86"><a href="#cb1-86" aria-hidden="true" tabindex="-1"></a>    <span class="at">shape =</span> <span class="dv">23</span>, <span class="at">size =</span> <span class="fl">4.5</span>,</span>
+<span id="cb1-87"><a href="#cb1-87" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill =</span> <span class="st">"white"</span>, <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">stroke =</span> <span class="fl">1.1</span></span>
+<span id="cb1-88"><a href="#cb1-88" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb1-89"><a href="#cb1-89" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-90"><a href="#cb1-90" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(</span>
+<span id="cb1-91"><a href="#cb1-91" aria-hidden="true" tabindex="-1"></a>    <span class="st">"segment"</span>,</span>
+<span id="cb1-92"><a href="#cb1-92" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="fl">2.25</span>, <span class="at">xend =</span> <span class="fl">2.25</span>,</span>
+<span id="cb1-93"><a href="#cb1-93" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> mean_A, <span class="at">yend =</span> mean_B,</span>
+<span id="cb1-94"><a href="#cb1-94" aria-hidden="true" tabindex="-1"></a>    <span class="at">arrow =</span> <span class="fu">arrow</span>(<span class="at">length =</span> <span class="fu">unit</span>(<span class="fl">0.18</span>, <span class="st">"cm"</span>), <span class="at">ends =</span> <span class="st">"both"</span>),</span>
+<span id="cb1-95"><a href="#cb1-95" aria-hidden="true" tabindex="-1"></a>    <span class="at">linewidth =</span> <span class="fl">1.0</span>, <span class="at">color =</span> <span class="st">"black"</span></span>
+<span id="cb1-96"><a href="#cb1-96" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb1-97"><a href="#cb1-97" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(</span>
+<span id="cb1-98"><a href="#cb1-98" aria-hidden="true" tabindex="-1"></a>    <span class="st">"text"</span>,</span>
+<span id="cb1-99"><a href="#cb1-99" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="fl">2.30</span>, <span class="at">y =</span> (mean_A <span class="sc">+</span> mean_B) <span class="sc">/</span> <span class="dv">2</span>,</span>
+<span id="cb1-100"><a href="#cb1-100" aria-hidden="true" tabindex="-1"></a>    <span class="at">label =</span> <span class="fu">paste0</span>(<span class="st">"Mean diff</span><span class="sc">\n</span><span class="st">"</span>, <span class="fu">round</span>(mean_diff, <span class="dv">2</span>)),</span>
+<span id="cb1-101"><a href="#cb1-101" aria-hidden="true" tabindex="-1"></a>    <span class="at">hjust =</span> <span class="dv">0</span>, <span class="at">size =</span> <span class="fl">4.2</span>, <span class="at">fontface =</span> <span class="st">"bold"</span></span>
+<span id="cb1-102"><a href="#cb1-102" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb1-103"><a href="#cb1-103" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-104"><a href="#cb1-104" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_linerange</span>(</span>
+<span id="cb1-105"><a href="#cb1-105" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> ruler_dt,</span>
+<span id="cb1-106"><a href="#cb1-106" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">ymin =</span> ymin, <span class="at">ymax =</span> ymax, <span class="at">color =</span> type),</span>
+<span id="cb1-107"><a href="#cb1-107" aria-hidden="true" tabindex="-1"></a>    <span class="at">inherit.aes =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb1-108"><a href="#cb1-108" aria-hidden="true" tabindex="-1"></a>    <span class="at">linewidth =</span> <span class="fl">2.3</span>, <span class="at">lineend =</span> <span class="st">"round"</span></span>
+<span id="cb1-109"><a href="#cb1-109" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb1-110"><a href="#cb1-110" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(</span>
+<span id="cb1-111"><a href="#cb1-111" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> ruler_dt,</span>
+<span id="cb1-112"><a href="#cb1-112" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> center, <span class="at">color =</span> type),</span>
+<span id="cb1-113"><a href="#cb1-113" aria-hidden="true" tabindex="-1"></a>    <span class="at">inherit.aes =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb1-114"><a href="#cb1-114" aria-hidden="true" tabindex="-1"></a>    <span class="at">size =</span> <span class="fl">3.3</span></span>
+<span id="cb1-115"><a href="#cb1-115" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb1-116"><a href="#cb1-116" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-117"><a href="#cb1-117" aria-hidden="true" tabindex="-1"></a>  <span class="co"># === 포인트 3: 글자 위아래 조절 ===</span></span>
+<span id="cb1-118"><a href="#cb1-118" aria-hidden="true" tabindex="-1"></a>  <span class="co"># + 2.5 라는 숫자를 조절해보세요.</span></span>
+<span id="cb1-119"><a href="#cb1-119" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(</span>
+<span id="cb1-120"><a href="#cb1-120" aria-hidden="true" tabindex="-1"></a>    <span class="st">"text"</span>,</span>
+<span id="cb1-121"><a href="#cb1-121" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="dv">3</span>, <span class="at">y =</span> mean_A <span class="sc">+</span> sd_ref <span class="sc">+</span> <span class="fl">3.7</span>, </span>
+<span id="cb1-122"><a href="#cb1-122" aria-hidden="true" tabindex="-1"></a>    <span class="at">label =</span> <span class="fu">paste0</span>(<span class="st">"1 Ref SD</span><span class="sc">\n</span><span class="st">("</span>, <span class="fu">round</span>(sd_ref, <span class="dv">2</span>), <span class="st">")"</span>),</span>
+<span id="cb1-123"><a href="#cb1-123" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">"#0072B2"</span>, <span class="at">fontface =</span> <span class="st">"bold"</span>, <span class="at">size =</span> <span class="fl">4.1</span></span>
+<span id="cb1-124"><a href="#cb1-124" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb1-125"><a href="#cb1-125" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(</span>
+<span id="cb1-126"><a href="#cb1-126" aria-hidden="true" tabindex="-1"></a>    <span class="st">"text"</span>,</span>
+<span id="cb1-127"><a href="#cb1-127" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="fl">3.3</span>, <span class="at">y =</span> mean_A <span class="sc">+</span> sd_pooled <span class="sc">+</span> <span class="fl">3.7</span>,</span>
+<span id="cb1-128"><a href="#cb1-128" aria-hidden="true" tabindex="-1"></a>    <span class="at">label =</span> <span class="fu">paste0</span>(<span class="st">"1 Pooled SD</span><span class="sc">\n</span><span class="st">("</span>, <span class="fu">round</span>(sd_pooled, <span class="dv">2</span>), <span class="st">")"</span>),</span>
+<span id="cb1-129"><a href="#cb1-129" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">"#D55E00"</span>, <span class="at">fontface =</span> <span class="st">"bold"</span>, <span class="at">size =</span> <span class="fl">4.1</span></span>
+<span id="cb1-130"><a href="#cb1-130" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb1-131"><a href="#cb1-131" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-132"><a href="#cb1-132" aria-hidden="true" tabindex="-1"></a>  <span class="co"># === 포인트 2: 투명 배경 &amp; 글자 크기 ===</span></span>
+<span id="cb1-133"><a href="#cb1-133" aria-hidden="true" tabindex="-1"></a>  <span class="co"># fill = NA (배경 투명), label.size = 0 (테두리 삭제)</span></span>
+<span id="cb1-134"><a href="#cb1-134" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(</span>
+<span id="cb1-135"><a href="#cb1-135" aria-hidden="true" tabindex="-1"></a>    <span class="st">"label"</span>,</span>
+<span id="cb1-136"><a href="#cb1-136" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="fl">1.5</span>, <span class="at">y =</span> y_max,</span>
+<span id="cb1-137"><a href="#cb1-137" aria-hidden="true" tabindex="-1"></a>    <span class="at">label =</span> label_txt,</span>
+<span id="cb1-138"><a href="#cb1-138" aria-hidden="true" tabindex="-1"></a>    <span class="at">size =</span> <span class="fl">3.8</span>, <span class="at">fontface =</span> <span class="st">"bold"</span>,</span>
+<span id="cb1-139"><a href="#cb1-139" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill =</span> <span class="fu">alpha</span>(<span class="st">"white"</span>, <span class="fl">0.5</span>),  <span class="co"># 흰색 배경에 50% 투명도 적용</span></span>
+<span id="cb1-140"><a href="#cb1-140" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">"black"</span>,</span>
+<span id="cb1-141"><a href="#cb1-141" aria-hidden="true" tabindex="-1"></a>    <span class="at">label.size =</span> <span class="dv">0</span>, </span>
+<span id="cb1-142"><a href="#cb1-142" aria-hidden="true" tabindex="-1"></a>    <span class="at">vjust =</span> <span class="dv">1</span></span>
+<span id="cb1-143"><a href="#cb1-143" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb1-144"><a href="#cb1-144" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-145"><a href="#cb1-145" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(</span>
+<span id="cb1-146"><a href="#cb1-146" aria-hidden="true" tabindex="-1"></a>    <span class="st">"A: Control (Stable Baseline)"</span> <span class="ot">=</span> <span class="st">"#BFD7EA"</span>,</span>
+<span id="cb1-147"><a href="#cb1-147" aria-hidden="true" tabindex="-1"></a>    <span class="st">"B: Treatment (Shifted + Noisy)"</span> <span class="ot">=</span> <span class="st">"#F6C5AF"</span></span>
+<span id="cb1-148"><a href="#cb1-148" aria-hidden="true" tabindex="-1"></a>  )) <span class="sc">+</span></span>
+<span id="cb1-149"><a href="#cb1-149" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(</span>
+<span id="cb1-150"><a href="#cb1-150" aria-hidden="true" tabindex="-1"></a>    <span class="st">"1 Ref SD"</span>    <span class="ot">=</span> <span class="st">"#0072B2"</span>,</span>
+<span id="cb1-151"><a href="#cb1-151" aria-hidden="true" tabindex="-1"></a>    <span class="st">"1 Pooled SD"</span> <span class="ot">=</span> <span class="st">"#D55E00"</span></span>
+<span id="cb1-152"><a href="#cb1-152" aria-hidden="true" tabindex="-1"></a>  )) <span class="sc">+</span></span>
+<span id="cb1-153"><a href="#cb1-153" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(</span>
+<span id="cb1-154"><a href="#cb1-154" aria-hidden="true" tabindex="-1"></a>    <span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>),</span>
+<span id="cb1-155"><a href="#cb1-155" aria-hidden="true" tabindex="-1"></a>    <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"A: Control</span><span class="sc">\n</span><span class="st">(Stable Baseline)"</span>, <span class="st">"B: Treatment</span><span class="sc">\n</span><span class="st">(Shifted + Noisy)"</span>)</span>
+<span id="cb1-156"><a href="#cb1-156" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb1-157"><a href="#cb1-157" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-158"><a href="#cb1-158" aria-hidden="true" tabindex="-1"></a>  <span class="co"># === 포인트 1: 오른쪽 텅 빈 공간(여백) 조절 ===</span></span>
+<span id="cb1-159"><a href="#cb1-159" aria-hidden="true" tabindex="-1"></a>  <span class="co"># xlim의 끝값(3.95)을 조절해보세요.</span></span>
+<span id="cb1-160"><a href="#cb1-160" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_cartesian</span>(</span>
+<span id="cb1-161"><a href="#cb1-161" aria-hidden="true" tabindex="-1"></a>    <span class="at">xlim =</span> <span class="fu">c</span>(<span class="fl">0.65</span>, <span class="fl">3.20</span>), </span>
+<span id="cb1-162"><a href="#cb1-162" aria-hidden="true" tabindex="-1"></a>    <span class="at">ylim =</span> <span class="fu">c</span>(y_min, y_max),</span>
+<span id="cb1-163"><a href="#cb1-163" aria-hidden="true" tabindex="-1"></a>    <span class="at">clip =</span> <span class="st">"off"</span></span>
+<span id="cb1-164"><a href="#cb1-164" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb1-165"><a href="#cb1-165" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb1-166"><a href="#cb1-166" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Same Mean Difference, Different Rulers"</span>,</span>
+<span id="cb1-167"><a href="#cb1-167" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"While large when measured by the Control SD,</span><span class="sc">\n</span><span class="st">using the Pooled SD inflates the 'ruler' due to the Treatment's variance,</span><span class="sc">\n</span><span class="st">diluting the signal."</span>,</span>
+<span id="cb1-168"><a href="#cb1-168" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="cn">NULL</span>,</span>
+<span id="cb1-169"><a href="#cb1-169" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Metrology Value"</span></span>
+<span id="cb1-170"><a href="#cb1-170" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb1-171"><a href="#cb1-171" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">14</span>) <span class="sc">+</span></span>
+<span id="cb1-172"><a href="#cb1-172" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb1-173"><a href="#cb1-173" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.position =</span> <span class="st">"none"</span>,</span>
+<span id="cb1-174"><a href="#cb1-174" aria-hidden="true" tabindex="-1"></a>    <span class="at">panel.grid.major.x =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb1-175"><a href="#cb1-175" aria-hidden="true" tabindex="-1"></a>    <span class="at">panel.grid.minor.x =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb1-176"><a href="#cb1-176" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">"bold"</span>, <span class="at">size =</span> <span class="dv">12</span>, <span class="at">color =</span> <span class="st">"black"</span>),</span>
+<span id="cb1-177"><a href="#cb1-177" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">"bold"</span>, <span class="at">size =</span> <span class="dv">17</span>),</span>
+<span id="cb1-178"><a href="#cb1-178" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.subtitle =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">12</span>),</span>
+<span id="cb1-179"><a href="#cb1-179" aria-hidden="true" tabindex="-1"></a>    <span class="co"># plot.margin의 두 번째 숫자(90)를 조절해보세요.</span></span>
+<span id="cb1-180"><a href="#cb1-180" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.margin =</span> <span class="fu">margin</span>(<span class="dv">15</span>, <span class="dv">90</span>, <span class="dv">15</span>, <span class="dv">15</span>)</span>
+<span id="cb1-181"><a href="#cb1-181" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-1-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>위 그림은 이 점을 시각적으로 보여준다. 파란 막대는 기준 집단의 표준편차(Ref SD)를, 빨간 막대는 pooled standard deviation을 나타낸다. 같은 평균 차이임에도 불구하고 어떤 자(ruler)를 쓰느냐에 따라 signal의 크기가 전혀 다르게 보인다. 기준 집단의 자로 보면 분명한 이동이지만, pooled 자로 재면 noisy target의 분산 때문에 그 이동이 작아 보이게 된다.</p>
+</section>
+<section id="가벼운-수학적-해석" class="level2">
+<h2 class="anchored" data-anchor-id="가벼운-수학적-해석">6. 가벼운 수학적 해석</h2>
+<p>핵심은 간단하다. <strong>분모는 장식이 아니다. 분모가 곧 비교의 의미를 정한다.</strong></p>
+<p>두 집단이 정규분포를 따르고 분산도 같다면, pooled standard deviation으로 표준화한 효과크기는 아주 자연스럽다. standardized mean difference가 분포 겹침이나 비겹침 해석과 잘 연결되는 것도 이 상황에서다. 하지만 분산이 다를 수 있다면 이야기가 달라진다. 그 순간 pooled-SD 계열과 reference-anchored 계열은 더 이상 같은 대상을 재고 있지 않다. 최근 해설은 հենց 이 점을 강조한다. standardized mean difference는 <strong>정규·등분산</strong>일 때 가장 자연스럽고, 이분산 상황에서는 표준화 방식마다 해석이 달라질 수 있다. (<a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC11562970/?utm_source=chatgpt.com">PMC</a>)</p>
+<p>이걸 간단한 식으로 보면 더 선명하다. reference와 target의 평균 차이는 고정되어 있다고 하자. 그리고 target의 표준편차가 reference의 (k)배라고 두자. 표본 크기가 비슷하면 pooled SD는 대략</p>
+<p>[</p>
+<p>s_{}</p>
+<p>_{}</p>
+<p>]</p>
+<p>가 된다. 따라서 pooled effect size는</p>
+<p>[d_{}</p>
+<p>_{}</p>
+<p>]</p>
+<p>로 쓸 수 있다.</p>
+<p>이 식이 말하는 바는 아주 직설적이다.</p>
+<p><strong>평균 이동이 그대로여도 target variance만 커지면 pooled effect size는 자동으로 줄어든다.</strong></p>
+<p>한 줄 더 밀어붙이면,</p>
+</section>
+<section id="section" class="level1">
+<h1>[</h1>
+<ul>
+<li>_{}</li>
+</ul>
+<p>&lt; 0</p>
+<p>(k&gt;0,&nbsp;_{}&gt;0)</p>
+<p>]</p>
+<p>이므로, (k)가 커질수록 pooled score는 단조감소한다.</p>
+<p>즉, target이 더 noisy해지는 순간 pooled score는 평균 이동 자체가 작아진 것처럼 행동한다.</p>
+<p>이게 바로 현장에서 말하던 “산포 튄 걸 분모에 섞으면 점수가 이상해진다”의 수학적 번역이다. 이건 취향 문제가 아니라, 분모가 만들어내는 <strong>attenuation mechanism</strong>이다. )</p>
+<section id="한계와-다음-질문" class="level2">
+<h2 class="anchored" data-anchor-id="한계와-다음-질문">7. 한계와 다음 질문</h2>
+<p>위에</p>
+<hr>
+</section>
+</section>
+<section id="appendix" class="level1">
+<h1>Appendix</h1>
+<p>여기서는 석사 수리통계 경험을 살려 좀 깊게? (이거 나도 공부가 많이 될 듯)</p>
+<p>중간중간내가 읽어보면서 글이랑 매끄럽게 이어지도록 그럼 좀 더 넣자!</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
