@@ -73,20 +73,11 @@ Glass’s Delta는 Control 또는 Reference 그룹의 표준편차를 분모로 
 
 ## 5. Small Simulation
 
-
-[//]: # (
-여기서 예시 R/python 로 (분명 ref는 안정\~ target은 날뛰는데 이러면 알람을 울려야함. 우리는 1sigma 기준을 보통 쓴다. 근데 pooled(Cohen’s d)를 쓰면 안 울리고 glass 쓰면 울리는 상황을 그림으로 잘 보여줘보쟈!!!!!!!!!!) 추가로 1sigma 기준으로 1/0을 나누는건 안 좋다 effect size를 써야함!!
-)
-
-
 직관을 위해 아주 단순한 시뮬레이션을 생각해보자. 기준 집단(reference)은 안정적인 공정을 나타낸다고 보고, 평균 100, 표준편차 1인 정규분포에서 생성한다. 반면 비교 집단(target)은 평균이 105로 이동했지만 동시에 훨씬 더 noisy해진 상황을 가정하여, 평균 105, 표준편차 8인 정규분포에서 생성한다.
-
 
 $$X_{\text{reference}} \sim \mathcal{N}(100, 1^2)$$
 
 $$X_{\text{target}} \sim \mathcal{N}(105, 8^2)$$
-
-
 
 이 설정에서 평균 차이(mean difference)는 약 5로 비교적 크다. 중요한 점은, 이 차이를 어떤 표준편차로 나누느냐에 따라 effect size의 해석이 크게 달라진다는 것이다.
 
@@ -97,14 +88,6 @@ $$\Delta_{\text{Glass}} \approx \frac{105 - 100}{1} = 5$$
 가 된다. 즉, 안정적인 baseline의 관점에서 보면 target은 기준 상태로부터 매우 크게 벗어난 것이다.
 
 반면 Cohen’s d는 두 집단의 정보를 합친 pooled standard deviation을 분모로 사용한다. 그런데 여기서는 target 집단의 분산이 매우 크므로, pooled SD 자체가 크게 증가한다. 그 결과 같은 평균 차이를 사용하더라도 effect size는 크게 줄어들며, 실제로 1보다 작은 값으로 떨어질 수 있다. 다시 말해, target의 불안정성이 분모에 흡수되면서 shift 자체가 희석되는 것이다.
-
-
-
-
-
-
-
-
 
 ```{r}
 #| echo: true
@@ -296,77 +279,33 @@ ggplot(dt, aes(x = x, y = Value)) +
   )
 ```
 
-
-
 위 그림은 이 점을 시각적으로 보여준다. 파란 막대는 기준 집단의 표준편차(Ref SD)를, 빨간 막대는 pooled standard deviation을 나타낸다. 같은 평균 차이임에도 불구하고 어떤 자(ruler)를 쓰느냐에 따라 signal의 크기가 전혀 다르게 보인다. 기준 집단의 자로 보면 분명한 이동이지만, pooled 자로 재면 noisy target의 분산 때문에 그 이동이 작아 보이게 된다.
-
-
-
 
 ## 6. 가벼운 수학적 해석
 
-[//]: # (
-핵심은 간단하다. **분모는 장식이 아니다. 분모가 곧 비교의 의미를 정한다.**
+핵심은 당연하게도 분모에 있다. 분모가 곧 비교의 의미를 정한다.
 
-두 집단이 정규분포를 따르고 분산도 같다면, pooled standard deviation으로 표준화한 효과크기는 아주 자연스럽다. standardized mean difference가 분포 겹침이나 비겹침 해석과 잘 연결되는 것도 이 상황에서다. 하지만 분산이 다를 수 있다면 이야기가 달라진다. 그 순간 pooled-SD 계열과 reference-anchored 계열은 더 이상 같은 대상을 재고 있지 않다. 최근 해설은 հենց 이 점을 강조한다. standardized mean difference는 **정규·등분산**일 때 가장 자연스럽고, 이분산 상황에서는 표준화 방식마다 해석이 달라질 수 있다. ([PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC11562970/?utm_source=chatgpt.com))
+두 집단이 정규분포를 따르고 분산도 같다면, pooled standard deviation으로 표준화한 효과크기는 아주 자연스럽다. Standardized mean difference(Cohen's $d$)가 분포의 겹침(Overlap)이나 통계적 직관과 1:1로 예쁘게 연결되는 것도 딱 이 조건에서다. 하지만 현업 데이터처럼 **분산이 다를 수 있다면** 이야기가 완전히 달라진다. 그 순간 Pooled-SD 계열과 Reference-anchored 계열(Glass's $\Delta$)은 더 이상 같은 대상을 재고 있지 않다.
 
-이걸 간단한 식으로 보면 더 선명하다. reference와 target의 평균 차이는 고정되어 있다고 하자. 그리고 target의 표준편차가 reference의 (k)배라고 두자. 표본 크기가 비슷하면 pooled SD는 대략
+Larry V. Hedges의 리뷰 논문(Hedges, 2024)은 이 지점을 아주 명확하게 짚어낸다. 해당 논문에 따르면, 이분산(Heteroscedasticity) 상황에서 효과크기를 해석할 때, 두 분산을 어떤 가중치($w$)로 섞어 쓸지 결정하는 순간부터 특정 집단이 다른 집단을 넘어설 확률(예: $U_3$ 비겹침 지수)과의 수학적 연결고리가 어긋나기 시작한다. 즉, 평균 이동 폭이 완전히 동일하더라도 '어떤 표준화 방식(분모)을 선택하느냐'에 따라 데이터의 중첩 정도나 실질적인 효과에 대한 해석이 완전히 왜곡될 수 있음이 수리적으로 증명된 것이다.
+[링크](https://pmc.ncbi.nlm.nih.gov/articles/PMC11562970/?utm_source=chatgpt.com)
+`여기 다듬기`
 
-[
+간단히 확인해 보자. Reference와 Target의 평균 차이는 $\mu_{\text{target}} - \mu_{\text{reference}}$로 고정되어 있다고 치자. 여기서 Target의 분포가 흔들려, 표준편차가 Reference의 $k$배가 되었다고 가정하자.
 
-s_{\text{pooled}}
+$$\sigma_{\text{target}} = k \cdot \sigma_{\text{reference}}$$
 
-\approx
+두 집단의 표본 크기가 비슷하다면, Pooled SD는 대략 다음과 같이 두 분산의 성격을 반씩 섞은 가상의 잣대가 된다.
 
-\sigma_{\text{reference}}
+$$s_{\text{pooled}} \approx \sigma_{\text{reference}} \sqrt{\frac{1+k^2}{2}}$$
 
-\sqrt{\frac{1+k^2}{2}}
+이 잣대를 사용하여 Pooled effect size를 구해보면, Glass's $\Delta$와 다음과 같은 관계식이 도출된다.
 
-]
+$$d_{\text{pooled}} = \frac{\mu_{\text{target}}-\mu_{\text{reference}}}{s_{\text{pooled}}} = \Delta_{\text{Glass}} \cdot \frac{1}{\sqrt{(1+k^2)/2}}$$
 
-가 된다. 따라서 pooled effect size는
+이 식이 말하는 바는 아주 직설적이다.평균 이동이 원래 목표대로 완벽하게 고정되어 있어도, Target의 산포가 기준치보다 커지는 순간 ($k>1$) 우변의 분모가 커지면서 Pooled effect size는 강제로 깎여나간다. Target이 불안정하여 산포가 튀면 튈수록 점수는 점점 더 작아져, 마치 평균 이동 자체가 미미했던 것처럼 착시를 일으킨다. 현장 엔지니어들이 찝찝해하며 말하던 “Target 산포 튄 걸 분모에 섞으면 점수가 이상해진다”를 확인해보았다. 이건 단순히 "어떤 지표를 쓸까?" 하는 취향의 문제가 아니다. Pooled SD라는 분모가 억지로 만들어내는 강력한 **Attenuation Mechanism(희석 기제)**이다. 우리는 그동안 이 수식의 왜곡을 직감적으로 피해서 Reference의 흔들리지 않는 잣대, Glass's $\Delta$를 쓰고 있었던 거다.
 
-[d_{\text{pooled}}
-
-\frac{\mu_{\text{target}}-\mu_{\text{reference}}}{s_{\text{pooled}}}
-
-\Delta_{\text{Glass}}
-
-\cdot
-
-\frac{1}{\sqrt{(1+k^2)/2}}
-]
-
-로 쓸 수 있다.
-
-이 식이 말하는 바는 아주 직설적이다.
-
-**평균 이동이 그대로여도 target variance만 커지면 pooled effect size는 자동으로 줄어든다.**
-
-한 줄 더 밀어붙이면,
-
-# [\frac{\partial d_{\text{pooled}}}{\partial k}
-
-- \Delta_{\text{Glass}}
-
-\cdot
-
-\frac{\sqrt{2},k}{(1+k^2)^{3/2}}
-
-< 0
-
-\qquad
-
-(k>0,\ \Delta_{\text{Glass}}>0)
-
-]
-
-이므로, (k)가 커질수록 pooled score는 단조감소한다.
-
-즉, target이 더 noisy해지는 순간 pooled score는 평균 이동 자체가 작아진 것처럼 행동한다.
-
-이게 바로 현장에서 말하던 “산포 튄 걸 분모에 섞으면 점수가 이상해진다”의 수학적 번역이다. 이건 취향 문제가 아니라, 분모가 만들어내는 **attenuation mechanism**이다.
-)
+`여기에 그래프 하나넣으면좋을듯`
 
 ## 7. 한계와 다음 질문
 
@@ -385,4 +324,87 @@ s_{\text{pooled}}
 
 
 
+## Appendix A. 문제의 수학적 설정 (Population Parameters)
 
+Reference 표본을 $R_1,\dots,R_m$, Target 표본을 $T_1,\dots,T_n$이라 하자. 가장 기본적인 Data Generating Process(DGP)는 다음과 같이 설정할 수 있다.
+
+$$R_i \overset{iid}{\sim} N(\mu_R, \sigma_R^2), \qquad T_j \overset{iid}{\sim} N(\mu_T, \sigma_T^2)$$
+
+두 표본은 서로 독립이다. 이때 모집단 수준의 순수 평균 이동(Raw mean shift)은 $\Delta_\mu = \mu_T - \mu_R$이다.
+
+만약 완벽한 등분산($\sigma_R = \sigma_T = \sigma$) 상황이라면, 모집단 효과크기는 $\delta = \frac{\mu_T - \mu_R}{\sigma}$로 유일하게 정의되며, 이것이 Standardized Mean Difference가 기하학적(분포의 중첩)으로 가장 자연스럽게 해석되는 조건이다. 
+
+그러나 반도체 제조 공정처럼 새로운 조건(Target)에서 산포의 변동이 필연적으로 수반되는 경우, 우리가 추정해야 하는 진정한 모수(Parameter of interest)는 "Baseline variability 단위로 평가한 평균의 이동"이다. 즉, Glass's Delta의 모집단 모수는 다음과 같이 정의된다.
+
+$$\Delta_G = \frac{\mu_T - \mu_R}{\sigma_R}$$
+
+여기서 핵심은 "어떤 추정량(Estimator)이 더 우수한가"를 논하기 전에, **"우리가 풀고자 하는 물리적 현상이 어느 모수(Parameter)에 매핑되는가"**를 명확히 하는 것이다.
+
+## Appendix B. Attenuation Mechanism의 해석적 증명
+
+Target의 표준편차가 Reference의 $k$배라고 하자 ($\sigma_T = k\sigma_R$). 
+표본 크기가 $m, n$일 때, Pooled SD의 모집단 아날로그(Population analogue)는 가중 평균에 의해 다음과 같이 근사된다.
+
+$$\sigma_{\text{pooled}} \approx \sigma_R \sqrt{\frac{(m-1) + (n-1)k^2}{m+n-2}}$$
+
+따라서 Pooled Standardized Difference는 다음과 같은 관계를 갖는다.
+
+$$d_{\text{pooled}} \approx \frac{\mu_T - \mu_R}{\sigma_{\text{pooled}}} = \Delta_G \left[ \frac{(m-1) + (n-1)k^2}{m+n-2} \right]^{-1/2}$$
+
+특히 실무 AB-Test처럼 표본 크기가 엇비슷한 경우($m \approx n$), 위 식은 다음과 같이 단순화된다.
+
+$$d_{\text{pooled}} \approx \Delta_G \cdot \frac{1}{\sqrt{(1+k^2)/2}}$$
+
+이 식의 거동을 확인하기 위해 Target 산포의 인플레이션 비율인 $k$에 대해 편미분하면 다음과 같다. (단, $k>0, \Delta_G>0$ 가정)
+
+$$\frac{\partial d_{\text{pooled}}}{\partial k} = -\Delta_G \cdot \frac{\sqrt{2}\,k}{(1+k^2)^{3/2}} < 0$$
+
+도함수가 항시 음수라는 것은, Target variance inflation($k$)이 커질수록 Pooled score가 **단조감소(Monotonically decreasing)**함을 의미한다. 즉, Pooled standardization은 분모의 선택만으로 Mean shift라는 Signal을 억압(Attenuation)하는 수학적 필터로 작동하게 된다.
+
+## Appendix C. 추정량 $\widehat{\Delta}_G$의 표본 분포와 Small-Sample Bias
+
+실무에서는 모수 $\Delta_G$를 알 수 없으므로, 표본 통계량 기반의 추정량 $\widehat{\Delta}_G = \frac{\bar{T} - \bar{R}}{S_R}$을 사용한다. 
+정규성과 독립성 가정 하에, 분자(평균 차이)와 분모(Reference 표준편차)의 분포는 다음과 같다.
+
+$$\bar{T} - \bar{R} \sim N\left(\mu_T - \mu_R, \frac{\sigma_T^2}{n} + \frac{\sigma_R^2}{m}\right)$$
+$$\frac{(m-1)S_R^2}{\sigma_R^2} \sim \chi^2_{m-1}$$
+
+또한 $\bar{T}-\bar{R}$와 $S_R$은 독립이다. 
+이제 상수 $c^2 = \frac{\sigma_T^2}{n} + \frac{\sigma_R^2}{m}$, 자유도 $\nu = m-1$, 비중심성 모수(Noncentrality parameter) $\lambda = \frac{\mu_T - \mu_R}{c}$라 정의하면, 표본 Glass 추정량은 다음과 같이 Scaled Noncentral $t$-분포로 표현된다.
+
+$$\widehat{\Delta}_G \overset{d}{=} \frac{c}{\sigma_R} \cdot t_\nu(\lambda)$$
+
+이 구조적 표현이 시사하는 바는 치명적이다. 
+첫째, $\widehat{\Delta}_G$의 기댓값은 $t$-분포의 특성상 모수 $\Delta_G$와 정확히 일치하지 않으며, 특히 Reference 표본 크기($m$)가 작을 때 상향 편향(Upward bias)을 갖는다. 
+둘째, 이 편향을 제거하기 위해 Hedges의 보정 계수 $J(\nu)$를 도입한 Unbiased Estimator를 고려해야 한다.
+
+$$J(\nu) = \frac{\Gamma(\nu/2)}{\sqrt{\nu/2} \, \Gamma((\nu-1)/2)}$$
+$$\widehat{\Delta}_{G,\text{adj}} = J(\nu)\widehat{\Delta}_G$$
+
+실무 대용량 데이터에서는 $J(\nu) \approx 1 - \frac{3}{4\nu-1} \approx 1$로 수렴하여 무시할 수 있지만, 특정 웨이퍼(Wafer) 단위의 소표본 분석에서는 분모의 불확실성을 통제하기 위해 반드시 이 보정이 수반되어야 한다.
+
+## Appendix D. Welch's t-test와 Glass’s Delta의 수리적 결합과 분리
+
+종종 제기되는 "이분산이면 Welch's t-test를 쓰면 되지 않나?"라는 질문은 통계적 추론(Inference)과 효과크기(Effect Size)의 목적 함수를 혼동한 결과다.
+
+Welch's t-statistic은 평균 차이를 '표본 추출의 불확실성(Sampling uncertainty)'으로 나눈 값이다.
+
+$$t_W = \frac{\bar{T} - \bar{R}}{\sqrt{S_T^2/n + S_R^2/m}}$$
+
+반면 표본 Glass's Delta는 '기준선의 물리적 변동성(Baseline variability)'으로 나눈 값이다. 두 지표는 다음과 같은 대수적 관계를 갖는다.
+
+$$\widehat{\Delta}_G = t_W \cdot \frac{\sqrt{S_T^2/n + S_R^2/m}}{S_R}$$
+
+이 수식은 두 지표가 경쟁 관계가 아님을 증명한다. Welch's $t_W$는 "이 차이가 통계적으로 유의미한가?"를 묻는 신호 대 잡음비(SNR)이고, Glass's $\Delta_G$는 "엔지니어링 관점에서 이 변화가 얼마나 거대한가?"를 묻는 절대적 스케일이다.
+
+## Appendix E. Mean Shift와 Spread Shift의 2차원 직교 분해
+
+결과적으로 단일 지표 하나로 이분산 상황의 DGP를 완벽히 묘사할 수는 없다. 
+따라서 DRB(Data Review Board) 대시보드 설계 시, 평균 이동과 산포 변동을 직교(Orthogonal)하는 두 개의 축으로 분리하여 평가하는 것이 가장 수리적으로 안전한 접근이다.
+
+산포의 변동을 측정하는 동반 지표(Spread companion metric)로 로그 분산비(Log Variance Ratio)를 정의할 수 있다.
+
+$$V = \log\left(\frac{S_T}{S_R}\right)$$
+
+이 로그 변환은 비율의 비대칭성을 교정하며, 중심극한정리에 의해 정규분포로의 근사가 용이하다는 해석적 이점을 갖는다.
+이를 통해 $(\widehat{\Delta}_G, V)$의 2차원 위상 평면을 구축하면, 평균은 정상이지만 산포가 붕괴된 불량($V \gg 0$)과, 산포는 유지된 채 조건만 이동한 정상적 Shift($\widehat{\Delta}_G > 0, V \approx 0$)를 단일 구조 내에서 수학적으로 분리해 낼 수 있다.

@@ -473,38 +473,21 @@ window.Quarto = {
 </section>
 <section id="가벼운-수학적-해석" class="level2">
 <h2 class="anchored" data-anchor-id="가벼운-수학적-해석">6. 가벼운 수학적 해석</h2>
-<p>핵심은 간단하다. <strong>분모는 장식이 아니다. 분모가 곧 비교의 의미를 정한다.</strong></p>
-<p>두 집단이 정규분포를 따르고 분산도 같다면, pooled standard deviation으로 표준화한 효과크기는 아주 자연스럽다. standardized mean difference가 분포 겹침이나 비겹침 해석과 잘 연결되는 것도 이 상황에서다. 하지만 분산이 다를 수 있다면 이야기가 달라진다. 그 순간 pooled-SD 계열과 reference-anchored 계열은 더 이상 같은 대상을 재고 있지 않다. 최근 해설은 հենց 이 점을 강조한다. standardized mean difference는 <strong>정규·등분산</strong>일 때 가장 자연스럽고, 이분산 상황에서는 표준화 방식마다 해석이 달라질 수 있다. (<a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC11562970/?utm_source=chatgpt.com">PMC</a>)</p>
-<p>이걸 간단한 식으로 보면 더 선명하다. reference와 target의 평균 차이는 고정되어 있다고 하자. 그리고 target의 표준편차가 reference의 (k)배라고 두자. 표본 크기가 비슷하면 pooled SD는 대략</p>
-<p>[</p>
-<p>s_{}</p>
-<p>_{}</p>
-<p>]</p>
-<p>가 된다. 따라서 pooled effect size는</p>
-<p>[d_{}</p>
-<p>_{}</p>
-<p>]</p>
-<p>로 쓸 수 있다.</p>
-<p>이 식이 말하는 바는 아주 직설적이다.</p>
-<p><strong>평균 이동이 그대로여도 target variance만 커지면 pooled effect size는 자동으로 줄어든다.</strong></p>
-<p>한 줄 더 밀어붙이면,</p>
+<p>핵심은 당연하게도 분모에 있다. 분모가 곧 비교의 의미를 정한다.</p>
+<p>두 집단이 정규분포를 따르고 분산도 같다면, pooled standard deviation으로 표준화한 효과크기는 아주 자연스럽다. Standardized mean difference(Cohen’s <span class="math inline">\(d\)</span>)가 분포의 겹침(Overlap)이나 통계적 직관과 1:1로 예쁘게 연결되는 것도 딱 이 조건에서다.하지만 현업 데이터처럼 ‘분산이 다를 수 있다면’ 이야기가 완전히 달라진다. 그 순간 Pooled-SD 계열과 Reference-anchored 계열(Glass’s <span class="math inline">\(\Delta\)</span>)은 더 이상 같은 대상을 재고 있지 않다.</p>
+<p>Larry V. Hedges의 리뷰 논문(Hedges, 2024)은 이 지점을 아주 명확하게 짚어낸다. 해당 논문에 따르면, 이분산(Heteroscedasticity) 상황에서 효과크기를 해석할 때, 두 분산을 어떤 가중치(<span class="math inline">\(w\)</span>)로 섞어 쓸지 결정하는 순간부터 특정 집단이 다른 집단을 넘어설 확률(예: <span class="math inline">\(U_3\)</span> 비겹침 지수)과의 수학적 연결고리가 어긋나기 시작한다. 즉, 평균 이동 폭이 완전히 동일하더라도 ’어떤 표준화 방식(분모)을 선택하느냐’에 따라 데이터의 중첩 정도나 실질적인 효과에 대한 해석이 완전히 왜곡될 수 있음이 수리적으로 증명된 것이다. <code>여기 다듬기</code></p>
+<p>간단히 확인해 보자. Reference와 Target의 평균 차이는 <span class="math inline">\(\mu_{\text{target}} - \mu_{\text{reference}}\)</span>로 고정되어 있다고 치자. 여기서 Target의 분포가 흔들려, 표준편차가 Reference의 <span class="math inline">\(k\)</span>배가 되었다고 가정하자.</p>
+<p><span class="math display">\[\sigma_{\text{target}} = k \cdot \sigma_{\text{reference}}\]</span></p>
+<p>두 집단의 표본 크기가 비슷하다면, Pooled SD는 대략 다음과 같이 두 분산의 성격을 반씩 섞은 가상의 잣대가 된다.</p>
+<p><span class="math display">\[s_{\text{pooled}} \approx \sigma_{\text{reference}} \sqrt{\frac{1+k^2}{2}}\]</span></p>
+<p>이 잣대를 사용하여 Pooled effect size를 구해보면, Glass’s <span class="math inline">\(\Delta\)</span>와 다음과 같은 관계식이 도출된다.</p>
+<p><span class="math display">\[d_{\text{pooled}} = \frac{\mu_{\text{target}}-\mu_{\text{reference}}}{s_{\text{pooled}}} = \Delta_{\text{Glass}} \cdot \frac{1}{\sqrt{(1+k^2)/2}}\]</span></p>
+<p>이 식이 말하는 바는 아주 직설적이다.평균 이동이 원래 목표대로 완벽하게 고정되어 있어도, Target의 산포가 기준치보다 커지는 순간 (<span class="math inline">\(k&gt;1\)</span>) 우변의 분모가 커지면서 Pooled effect size는 강제로 깎여나간다. Target이 불안정하여 산포가 튀면 튈수록 점수는 점점 더 작아져, 마치 평균 이동 자체가 미미했던 것처럼 착시를 일으킨다.이게 바로 현장 엔지니어들이 찝찝해하며 말하던 <strong>“Target 산포 튄 걸 분모에 섞으면 점수가 이상해진다”</strong>의 완벽한 수학적 번역이다. 이건 단순히 “어떤 지표를 쓸까?” 하는 취향의 문제가 아니다. Pooled SD라는 분모가 억지로 만들어내는 강력한 <strong>Attenuation Mechanism(희석 기제)</strong>이다. 우리는 그동안 이 수식의 왜곡을 직감적으로 피해서 Reference의 흔들리지 않는 잣대, Glass’s <span class="math inline">\(\Delta\)</span>를 쓰고 있었던 거다.</p>
 </section>
-<section id="section" class="level1">
-<h1>[</h1>
-<ul>
-<li>_{}</li>
-</ul>
-<p>&lt; 0</p>
-<p>(k&gt;0,&nbsp;_{}&gt;0)</p>
-<p>]</p>
-<p>이므로, (k)가 커질수록 pooled score는 단조감소한다.</p>
-<p>즉, target이 더 noisy해지는 순간 pooled score는 평균 이동 자체가 작아진 것처럼 행동한다.</p>
-<p>이게 바로 현장에서 말하던 “산포 튄 걸 분모에 섞으면 점수가 이상해진다”의 수학적 번역이다. 이건 취향 문제가 아니라, 분모가 만들어내는 <strong>attenuation mechanism</strong>이다. )</p>
 <section id="한계와-다음-질문" class="level2">
 <h2 class="anchored" data-anchor-id="한계와-다음-질문">7. 한계와 다음 질문</h2>
 <p>위에</p>
 <hr>
-</section>
 </section>
 <section id="appendix" class="level1">
 <h1>Appendix</h1>
