@@ -1,0 +1,13 @@
+﻿---
+title: "Semiconductor Data Analysis AB-Test #2"
+description: "계층 모델로 랏성(LOT Effect) 분석"
+author: "Taejun Park"
+date: "2026-04-19"
+categories: [Statistics, Data Science, DRB]
+image: "thumbnail.png"
+format:
+  html:
+    code-fold: true
+---
+
+##
