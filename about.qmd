@@ -1,12 +1,6 @@
 ---
-title: "About"
-image: profile.jpg
-about:
-  template: jolla
-  links:
-    - icon: github
-      text: Github
-      href: https://github.com/parktj4264
+title: "About Me"
+page-layout: article
 ---
 
 ## **박태준**

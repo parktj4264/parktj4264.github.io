@@ -78,7 +78,7 @@ ul.task-list li input[type="checkbox"] {
 <body class="nav-sidebar docked nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
-  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+  <header id="quarto-header" class="headroom fixed-top">
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
@@ -125,40 +125,7 @@ ul.task-list li input[type="checkbox"] {
   </nav>
 </header>
 <!-- content -->
-<header id="title-block-header" class="quarto-title-block default page-columns page-full">
-  <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-body">
-      <h1 class="title">Semiconductor Data AB-Test #2</h1>
-                  <div>
-        <div class="description">
-          계층 모델로 랏성(LOT Effect) 분석
-        </div>
-      </div>
-                </div>
-  </div>
-    
-  
-  <div class="quarto-title-meta">
-
-      <div>
-      <div class="quarto-title-meta-heading">Author</div>
-      <div class="quarto-title-meta-contents">
-               <p>Taejun Park </p>
-            </div>
-    </div>
-      
-      <div>
-      <div class="quarto-title-meta-heading">Published</div>
-      <div class="quarto-title-meta-contents">
-        <p class="date">April 19, 2026</p>
-      </div>
-    </div>
-    
-      
-    </div>
-    
-  
-  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
@@ -199,10 +166,42 @@ ul.task-list li input[type="checkbox"] {
 </nav>
     </div>
 <!-- main -->
-<main class="content quarto-banner-title-block" id="quarto-document-content">
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Semiconductor Data AB-Test #2</h1>
+</div>
+
+<div>
+  <div class="description">
+    계층 모델로 랏성(LOT Effect) 분석
+  </div>
+</div>
 
 
+<div class="quarto-title-meta">
 
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Taejun Park </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">April 19, 2026</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
 
 
 <section id="section" class="level2">
@@ -217,147 +216,289 @@ ul.task-list li input[type="checkbox"] {
 
 <a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a></main> <!-- /main -->
 <script>
+
   document.addEventListener("DOMContentLoaded", function() {
+
     let path = window.location.pathname;
+
     
+
     // Determine the logical active section
+
     let isHome = path === '/' || (path.endsWith('/index.html') && !path.includes('/posts/'));
+
     let isPosts = path.includes('/posts.html') || path.includes('/posts/');
+
     let isAbout = path.includes('/about.html');
+
     
+
     const navLinks = document.querySelectorAll('.navbar-nav .nav-link');
+
     navLinks.forEach(link => {
+
       let text = link.textContent.trim();
+
       link.classList.remove('active');
+
       if (text === 'Home' && isHome) link.classList.add('active');
+
       if (text === 'Posts' && isPosts) link.classList.add('active');
+
       if (text === 'About' && isAbout) link.classList.add('active');
+
     });
+
+
 
     const sidebarItems = document.querySelectorAll('.quarto-sidebar .sidebar-item');
+
     sidebarItems.forEach(li => {
+
        li.classList.remove('active');
+
        let text = li.textContent.trim();
+
        if (text === 'Home' && isHome) li.classList.add('active');
+
        if (text === 'Posts' && isPosts) li.classList.add('active');
+
        if (text === 'About' && isAbout) li.classList.add('active');
+
        
+
        let a = li.querySelector('a, span.sidebar-item-text');
+
        if (a) {
+
            if (li.classList.contains('active')) {
+
                a.style.color = '#3498db';
+
                a.style.fontWeight = 'bold';
+
            } else {
+
                a.style.color = '';
+
                a.style.fontWeight = '';
+
            }
+
        }
+
     });
+
   });
+
 </script>
+
 <div class="custom-post-list-container mt-5">
+
   <h4 class="custom-post-list-title">
+
       <i class="bi bi-card-list me-2"></i> 전체 글 목록
+
   </h4>
+
   <ul id="custom-post-list" class="custom-post-list">
+
     <li class="skeleton-loader" style="list-style:none; color:#888;">목록을 불러오는 중입니다...</li>
+
   </ul>
+
 </div>
 
+
+
 <script>
+
 document.addEventListener("DOMContentLoaded", async function() {
+
   try {
+
     const listingsRes = await fetch('/listings.json').catch(() => null);
+
     if (!listingsRes) return;
 
+
+
     const listingsRaw = await listingsRes.json();
+
     const listingObj = listingsRaw.find(l => l.listing === "/index.html" || l.listing === "index.html" || l.listing === "/");
+
     if (!listingObj || !listingObj.items) return;
+
     
+
     // Normalize paths in the items list to start with "/"
+
     const allPostsRaw = listingObj.items.map(item => item.startsWith('/') ? item : '/' + item);
+
     
+
     const listElement = document.getElementById('custom-post-list');
+
     listElement.innerHTML = '';
+
     
+
     // Determine the current page's normalized path
+
     let currentPath = window.location.pathname;
+
     if (currentPath.endsWith('/')) {
+
         currentPath += 'index.html';
+
     } else if (!currentPath.endsWith('.html')) {
+
         currentPath += '/index.html';
+
     }
+
     
+
     // Attempt to match the current path in allPostsRaw
+
     let currentIndex = allPostsRaw.findIndex(p => p === currentPath);
+
     if (currentIndex === -1) {
+
         currentIndex = allPostsRaw.findIndex(p => p === currentPath.replace('index.html', ''));
+
     }
+
     if (currentIndex === -1) {
+
         currentIndex = 0;
+
     }
+
     
+
     // We want to show a sliding window of max 5 posts
+
     let startIdx = 0;
+
     const itemsToShow = 5;
+
     if (currentIndex > -1) {
+
        startIdx = Math.max(0, currentIndex - 2); 
+
        if (startIdx + itemsToShow > allPostsRaw.length) {
+
           startIdx = Math.max(0, allPostsRaw.length - itemsToShow);
+
        }
+
     }
+
     
+
     const postsToShow = allPostsRaw.slice(startIdx, startIdx + itemsToShow);
+
     
+
     // Fetch titles efficiently in parallel from the actual post HTML
+
     const titlePromises = postsToShow.map(async (postPath) => {
+
         try {
+
             const res = await fetch(postPath);
+
             const html = await res.text();
+
             const doc = new DOMParser().parseFromString(html, 'text/html');
+
             const titleEl = doc.querySelector('h1.title') || doc.querySelector('title');
+
             let titleText = titleEl ? titleEl.textContent : postPath;
+
             if (titleEl && titleEl.tagName === 'TITLE') {
+
                 titleText = titleText.split('|')[0].trim();
+
             }
+
             return { path: postPath, title: titleText };
+
         } catch(e) {
+
             return { path: postPath, title: "게시글 조회를 실패했습니다." };
+
         }
+
     });
+
+
 
     const postsData = await Promise.all(titlePromises);
 
+
+
     postsData.forEach(post => {
+
       const li = document.createElement('li');
+
       li.className = 'custom-post-item';
+
       
+
       const isCurrent = (post.path === currentPath) || (post.path === currentPath.replace('index.html', ''));
+
       if (isCurrent) {
+
          li.classList.add('current');
+
       }
+
       
+
       const a = document.createElement('a');
+
       a.href = post.path; 
+
       a.textContent = post.title;
+
       
+
       if (isCurrent) {
+
         const badge = document.createElement('span');
+
         badge.className = 'current-badge';
+
         badge.textContent = '현재글';
+
         a.prepend(badge); 
+
       }
+
       
+
       li.appendChild(a);
+
       listElement.appendChild(li);
+
     });
 
+
+
   } catch (err) {
+
     console.error("Could not load related posts list.", err);
+
     document.getElementById('custom-post-list').innerHTML = '<li style="list-style:none;">게시글 목록을 불러올 수 없습니다.</li>';
+
   }
+
 });
+
 </script>
+
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
     const icon = "";
