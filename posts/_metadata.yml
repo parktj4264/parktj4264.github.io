@@ -9,4 +9,6 @@ title-block-banner: true
 
 format:
   html:
-    include-after-body: recent_posts.html
+    include-after-body: 
+      - ../global_custom.html
+      - recent_posts.html

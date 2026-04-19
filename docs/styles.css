@@ -65,6 +65,22 @@ main.content li {
   letter-spacing: 0.5px;
 }
 
+/* Navbar Subtitle Injection */
+.navbar-brand .navbar-title::after {
+  content: " | Statistics, Data Science, and Thinking with Data";
+  font-size: 0.6rem;
+  font-weight: 400;
+  color: #7f8c8d; /* Gray color for light navbars */
+  margin-left: 10px;
+  opacity: 0.9;
+  vertical-align: middle;
+}
+@media (max-width: 768px) {
+  .navbar-brand .navbar-title::after {
+    display: none; /* Hide on mobile to save space */
+  }
+}
+
 /* Post list styling */
 .quarto-listing-default .quarto-post {
   transition: transform 0.2s ease-in-out;
@@ -94,18 +110,43 @@ a:hover {
 /* Sidebar customization */
 .sidebar-logo {
   border-radius: 50%;
-  width: 120px;
-  height: 120px;
+  width: 150px !important;
+  height: 150px !important;
   object-fit: cover;
-  margin: 0 auto 15px auto;
+  margin: 0 auto 0 auto !important;
   display: block;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   border: 4px solid #fff;
   transition: transform 0.3s ease;
 }
 
+.quarto-sidebar-header {
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
+}
+
 .sidebar-logo:hover {
   transform: scale(1.05);
+}
+
+.profile-name {
+  text-align: center;
+  font-weight: 800;
+  font-size: 1.15rem;
+  color: #2c3e50;
+  margin-top: -25px !important;
+  margin-bottom: 5px !important;
+  letter-spacing: 0.5px;
+}
+
+.profile-bio {
+  text-align: center;
+  font-size: 0.85rem;
+  color: #7f8c8d;
+  line-height: 1.5;
+  margin-bottom: 20px;
+  padding: 0 10px;
+  word-break: keep-all;
 }
 
 .quarto-sidebar .sidebar-title {
@@ -119,7 +160,9 @@ a:hover {
 #TOC {
   border-left: 2px solid #eaeaea;
   padding-left: 15px;
+  padding-right: 5px;
   font-size: 0.9rem;
+  overflow-x: hidden;
 }
 
 #TOC a {

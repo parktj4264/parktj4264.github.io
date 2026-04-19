@@ -24,12 +24,8 @@ website:
     search: true
     logo: profile.jpg
     contents:
-      - text: "Home"
-        href: index.qmd
-      - text: "Posts"
-        href: posts.qmd
-      - text: "About"
-        href: about.qmd
+      - text: "<div class='profile-name'>T.J.PARK</div>"
+      - text: "<div class='profile-bio'>수학과 통계학을 전공 현업에서 통계적 반도체 데이터 분석 업무</div>"
     tools:
       - icon: github
         href: https://github.com/parktj4264
@@ -38,6 +34,7 @@ format:
   html:
     theme: litera
     css: styles.css
+    include-after-body: global_custom.html
     toc: true
     toc-location: right
     toc-title: "목차"

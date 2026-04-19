@@ -157,7 +157,7 @@ window.Quarto = {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link active" href="../../index.html" aria-current="page"> 
+    <a class="nav-link" href="../../index.html"> 
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
@@ -247,23 +247,11 @@ window.Quarto = {
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../index.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Home</span></a>
-  </div>
-</li>
+ <span class="menu-text"><div class="profile-name">T.J.PARK</div></span>
+  </li>
         <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../posts.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Posts</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../about.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">About</span></a>
-  </div>
-</li>
+ <span class="menu-text"><div class="profile-bio">수학과 통계학을 전공 현업에서 통계적 반도체 데이터 분석 업무</div></span>
+  </li>
     </ul>
     </div>
 </nav>
@@ -626,6 +614,45 @@ window.Quarto = {
 </section>
 
 <a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a></main> <!-- /main -->
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    let path = window.location.pathname;
+    
+    // Determine the logical active section
+    let isHome = path === '/' || (path.endsWith('/index.html') && !path.includes('/posts/'));
+    let isPosts = path.includes('/posts.html') || path.includes('/posts/');
+    let isAbout = path.includes('/about.html');
+    
+    const navLinks = document.querySelectorAll('.navbar-nav .nav-link');
+    navLinks.forEach(link => {
+      let text = link.textContent.trim();
+      link.classList.remove('active');
+      if (text === 'Home' && isHome) link.classList.add('active');
+      if (text === 'Posts' && isPosts) link.classList.add('active');
+      if (text === 'About' && isAbout) link.classList.add('active');
+    });
+
+    const sidebarItems = document.querySelectorAll('.quarto-sidebar .sidebar-item');
+    sidebarItems.forEach(li => {
+       li.classList.remove('active');
+       let text = li.textContent.trim();
+       if (text === 'Home' && isHome) li.classList.add('active');
+       if (text === 'Posts' && isPosts) li.classList.add('active');
+       if (text === 'About' && isAbout) li.classList.add('active');
+       
+       let a = li.querySelector('a, span.sidebar-item-text');
+       if (a) {
+           if (li.classList.contains('active')) {
+               a.style.color = '#3498db';
+               a.style.fontWeight = 'bold';
+           } else {
+               a.style.color = '';
+               a.style.fontWeight = '';
+           }
+       }
+    });
+  });
+</script>
 <div class="custom-post-list-container mt-5">
   <h4 class="custom-post-list-title">
       <i class="bi bi-card-list me-2"></i> 전체 글 목록

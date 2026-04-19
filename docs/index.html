@@ -29,7 +29,6 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./posts.html" rel="next">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
@@ -113,7 +112,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./index.html">Home</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Statistical Data Science</li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -143,23 +142,11 @@ ul.task-list li input[type="checkbox"] {
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./index.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text">Home</span></a>
-  </div>
-</li>
+ <span class="menu-text"><div class="profile-name">T.J.PARK</div></span>
+  </li>
         <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./posts.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Posts</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./about.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">About</span></a>
-  </div>
-</li>
+ <span class="menu-text"><div class="profile-bio">수학과 통계학을 전공 현업에서 통계적 반도체 데이터 분석 업무</div></span>
+  </li>
     </ul>
     </div>
 </nav>
@@ -170,7 +157,7 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">목차</h2>
    
   <ul>
-  <li><a href="#환영합니다" id="toc-환영합니다" class="nav-link active" data-scroll-target="#환영합니다">환영합니다! 👋</a></li>
+  <li><a href="#환영합니다" id="toc-환영합니다" class="nav-link active" data-scroll-target="#환영합니다">환영합니다</a></li>
   </ul>
 </nav>
     </div>
@@ -198,9 +185,9 @@ ul.task-list li input[type="checkbox"] {
 
 
 <section id="환영합니다" class="level2">
-<h2 class="anchored" data-anchor-id="환영합니다">환영합니다! 👋</h2>
-<p><strong>T.J.PARK</strong>의 블로그에 오신 것을 환영합니다.</p>
-<p>수학과 통계학을 전공하고 반도체 데이터 분석을 하며 경험하는 통계적 인사이트를 기록합니다.</p>
+<h2 class="anchored" data-anchor-id="환영합니다">환영합니다</h2>
+<p><strong>T.J.PARK</strong>의 블로그입니다.</p>
+<p>수학과 통계학을 전공하고, 현업에서 반도체 데이터 분석을 하며 경험하는 통계적 인사이트를 기록합니다.</p>
 <ul>
 <li>좌측 메뉴의 <a href="./posts.html"><strong>Posts</strong></a>를 누르시면 전체 게시글을 확인하실 수 있습니다.</li>
 <li><a href="./about.html"><strong>About</strong></a> 메뉴에서는 제 이력을 보실 수 있습니다.</li>
@@ -211,6 +198,45 @@ ul.task-list li input[type="checkbox"] {
 </section>
 
 <a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a></main> <!-- /main -->
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    let path = window.location.pathname;
+    
+    // Determine the logical active section
+    let isHome = path === '/' || (path.endsWith('/index.html') && !path.includes('/posts/'));
+    let isPosts = path.includes('/posts.html') || path.includes('/posts/');
+    let isAbout = path.includes('/about.html');
+    
+    const navLinks = document.querySelectorAll('.navbar-nav .nav-link');
+    navLinks.forEach(link => {
+      let text = link.textContent.trim();
+      link.classList.remove('active');
+      if (text === 'Home' && isHome) link.classList.add('active');
+      if (text === 'Posts' && isPosts) link.classList.add('active');
+      if (text === 'About' && isAbout) link.classList.add('active');
+    });
+
+    const sidebarItems = document.querySelectorAll('.quarto-sidebar .sidebar-item');
+    sidebarItems.forEach(li => {
+       li.classList.remove('active');
+       let text = li.textContent.trim();
+       if (text === 'Home' && isHome) li.classList.add('active');
+       if (text === 'Posts' && isPosts) li.classList.add('active');
+       if (text === 'About' && isAbout) li.classList.add('active');
+       
+       let a = li.querySelector('a, span.sidebar-item-text');
+       if (a) {
+           if (li.classList.contains('active')) {
+               a.style.color = '#3498db';
+               a.style.fontWeight = 'bold';
+           } else {
+               a.style.color = '';
+               a.style.fontWeight = '';
+           }
+       }
+    });
+  });
+</script>
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
     const icon = "";
@@ -611,15 +637,6 @@ ul.task-list li input[type="checkbox"] {
     }
   });
   </script>
-<nav class="page-navigation">
-  <div class="nav-page nav-page-previous">
-  </div>
-  <div class="nav-page nav-page-next">
-      <a href="./posts.html" class="pagination-link" aria-label="Posts">
-        <span class="nav-page-text">Posts</span> <i class="bi bi-arrow-right-short"></i>
-      </a>
-  </div>
-</nav>
 </div> <!-- /content -->
 
 
