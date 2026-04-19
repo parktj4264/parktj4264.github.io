@@ -6,16 +6,38 @@ project:
     - "!private-notes/**"
 
 website:
-  title: "T.J.PARK BLOG"
+  title: "Statistical Data Science"
+  page-navigation: true
+  back-to-top-navigation: true
   navbar:
-    right:
-      - about.qmd
+    pinned: true
+    title: "Statistical Data Science"
+    left:
+      - text: "Home"
+        href: index.qmd
+      - text: "About"
+        href: about.qmd
+  sidebar:
+    style: "docked"
+    search: true
+    logo: profile.jpg
+    contents:
+      - section: "Menu"
+        contents:
+          - text: "Home"
+            href: index.qmd
+          - text: "About"
+            href: about.qmd
+    tools:
       - icon: github
         href: https://github.com/parktj4264
+
 format:
   html:
     theme: litera
     css: styles.css
+    toc: true
+    toc-location: right
+    toc-title: "목차"
 
 editor: visual
-

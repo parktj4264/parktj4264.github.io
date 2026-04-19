@@ -90,3 +90,108 @@ a:hover {
   color: #2980b9;
   text-decoration: underline;
 }
+
+/* Sidebar customization */
+.sidebar-logo {
+  border-radius: 50%;
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  margin: 0 auto 15px auto;
+  display: block;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border: 4px solid #fff;
+  transition: transform 0.3s ease;
+}
+
+.sidebar-logo:hover {
+  transform: scale(1.05);
+}
+
+.quarto-sidebar .sidebar-title {
+  text-align: center;
+  font-weight: 700;
+  margin-bottom: 20px;
+  color: #2c3e50;
+}
+
+/* TOC customization */
+#TOC {
+  border-left: 2px solid #eaeaea;
+  padding-left: 15px;
+  font-size: 0.9rem;
+}
+
+#TOC a {
+  color: #7f8c8d;
+  text-decoration: none;
+  transition: all 0.2s;
+  display: block;
+  padding: 3px 0;
+}
+
+#TOC a:hover, #TOC a.active {
+  color: #3498db;
+  font-weight: 600;
+  transform: translateX(3px);
+}
+
+/* Custom Recent Posts styling */
+.custom-post-list-container {
+  border-top: 2px solid #eaeaea;
+  padding-top: 20px;
+  margin-top: 50px;
+  margin-bottom: 30px;
+}
+
+.custom-post-list-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 15px;
+  color: #2c3e50;
+}
+
+.custom-post-list {
+  padding-left: 0;
+  list-style: none;
+  font-size: 0.95rem;
+}
+
+.custom-post-item {
+  margin-bottom: 8px;
+  border-bottom: 1px dashed #efefef;
+  padding-bottom: 8px;
+}
+
+.custom-post-item:last-child {
+  border-bottom: none;
+}
+
+.custom-post-item a {
+  text-decoration: none;
+  color: #555;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+}
+
+.custom-post-item a:hover {
+  color: #3498db;
+  padding-left: 5px;
+}
+
+.custom-post-item.current a {
+  font-weight: 700;
+  color: #2c3e50;
+}
+
+.current-badge {
+  background-color: #e74c3c;
+  color: white;
+  font-size: 0.75rem;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-right: 8px;
+  font-weight: bold;
+}
+

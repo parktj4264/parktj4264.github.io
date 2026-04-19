@@ -1,0 +1,103 @@
+<div class="custom-post-list-container mt-5">
+  <h4 class="custom-post-list-title">
+      <i class="bi bi-card-list me-2"></i> 전체 글 목록
+  </h4>
+  <ul id="custom-post-list" class="custom-post-list">
+    <li class="skeleton-loader" style="list-style:none; color:#888;">목록을 불러오는 중입니다...</li>
+  </ul>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", async function() {
+  try {
+    const listingsRes = await fetch('/listings.json').catch(() => null);
+    if (!listingsRes) return;
+
+    const listingsRaw = await listingsRes.json();
+    const listingObj = listingsRaw.find(l => l.listing === "/index.html" || l.listing === "index.html" || l.listing === "/");
+    if (!listingObj || !listingObj.items) return;
+    
+    // Normalize paths in the items list to start with "/"
+    const allPostsRaw = listingObj.items.map(item => item.startsWith('/') ? item : '/' + item);
+    
+    const listElement = document.getElementById('custom-post-list');
+    listElement.innerHTML = '';
+    
+    // Determine the current page's normalized path
+    let currentPath = window.location.pathname;
+    if (currentPath.endsWith('/')) {
+        currentPath += 'index.html';
+    } else if (!currentPath.endsWith('.html')) {
+        currentPath += '/index.html';
+    }
+    
+    // Attempt to match the current path in allPostsRaw
+    let currentIndex = allPostsRaw.findIndex(p => p === currentPath);
+    if (currentIndex === -1) {
+        currentIndex = allPostsRaw.findIndex(p => p === currentPath.replace('index.html', ''));
+    }
+    if (currentIndex === -1) {
+        currentIndex = 0;
+    }
+    
+    // We want to show a sliding window of max 5 posts
+    let startIdx = 0;
+    const itemsToShow = 5;
+    if (currentIndex > -1) {
+       startIdx = Math.max(0, currentIndex - 2); 
+       if (startIdx + itemsToShow > allPostsRaw.length) {
+          startIdx = Math.max(0, allPostsRaw.length - itemsToShow);
+       }
+    }
+    
+    const postsToShow = allPostsRaw.slice(startIdx, startIdx + itemsToShow);
+    
+    // Fetch titles efficiently in parallel from the actual post HTML
+    const titlePromises = postsToShow.map(async (postPath) => {
+        try {
+            const res = await fetch(postPath);
+            const html = await res.text();
+            const doc = new DOMParser().parseFromString(html, 'text/html');
+            const titleEl = doc.querySelector('h1.title') || doc.querySelector('title');
+            let titleText = titleEl ? titleEl.textContent : postPath;
+            if (titleEl && titleEl.tagName === 'TITLE') {
+                titleText = titleText.split('|')[0].trim();
+            }
+            return { path: postPath, title: titleText };
+        } catch(e) {
+            return { path: postPath, title: "게시글 조회를 실패했습니다." };
+        }
+    });
+
+    const postsData = await Promise.all(titlePromises);
+
+    postsData.forEach(post => {
+      const li = document.createElement('li');
+      li.className = 'custom-post-item';
+      
+      const isCurrent = (post.path === currentPath) || (post.path === currentPath.replace('index.html', ''));
+      if (isCurrent) {
+         li.classList.add('current');
+      }
+      
+      const a = document.createElement('a');
+      a.href = post.path; 
+      a.textContent = post.title;
+      
+      if (isCurrent) {
+        const badge = document.createElement('span');
+        badge.className = 'current-badge';
+        badge.textContent = '현재글';
+        a.prepend(badge); 
+      }
+      
+      li.appendChild(a);
+      listElement.appendChild(li);
+    });
+
+  } catch (err) {
+    console.error("Could not load related posts list.", err);
+    document.getElementById('custom-post-list').innerHTML = '<li style="list-style:none;">게시글 목록을 불러올 수 없습니다.</li>';
+  }
+});
+</script>

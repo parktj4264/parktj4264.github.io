@@ -7,10 +7,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Taejun Park">
-<meta name="dcterms.date" content="2026-03-31">
-<meta name="description" content="반도체 데이터 리뷰의 지표 고찰">
+<meta name="dcterms.date" content="2026-04-19">
+<meta name="description" content="계층 모델로 랏성(LOT Effect) 분석">
 
-<title>반도체 데이터분석에서의 AB-Test (Two-Sample Test) – T.J.PARK BLOG</title>
+<title>index – Statistical Data Science</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -27,7 +27,6 @@ ul.task-list li input[type="checkbox"] {
 
 
 <script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
 <script src="../../site_libs/clipboard/clipboard.min.js"></script>
 <script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
 <script src="../../site_libs/quarto-search/fuse.min.js"></script>
@@ -43,7 +42,7 @@ ul.task-list li input[type="checkbox"] {
 <link href="../../site_libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-d1897f967d4dc882e6c3c4aa210b578e.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-5353b2c1bd1c3ed25d533c9b8e7f9095.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -76,7 +75,7 @@ ul.task-list li input[type="checkbox"] {
 <link rel="stylesheet" href="../../styles.css">
 </head>
 
-<body class="nav-fixed fullcontent quarto-light">
+<body class="nav-sidebar docked nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
@@ -84,7 +83,7 @@ ul.task-list li input[type="checkbox"] {
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
     <a class="navbar-brand" href="../../index.html">
-    <span class="navbar-title">T.J.PARK BLOG</span>
+    <span class="navbar-title">Statistical Data Science</span>
     </a>
   </div>
             <div id="quarto-search" class="" title="Search"></div>
@@ -92,15 +91,14 @@ ul.task-list li input[type="checkbox"] {
   <span class="navbar-toggler-icon"></span>
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
-            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link active" href="../../index.html" aria-current="page"> 
+<span class="menu-text">Home</span></a>
+  </li>  
   <li class="nav-item">
     <a class="nav-link" href="../../about.html"> 
 <span class="menu-text">About</span></a>
-  </li>  
-  <li class="nav-item compact">
-    <a class="nav-link" href="https://github.com/parktj4264"> <i class="bi bi-github" role="img">
-</i> 
-<span class="menu-text"></span></a>
   </li>  
 </ul>
           </div> <!-- /navcollapse -->
@@ -108,22 +106,31 @@ ul.task-list li input[type="checkbox"] {
 </div>
       </div> <!-- /container-fluid -->
     </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Semiconductor Data AB-Test #2</li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
 </header>
 <!-- content -->
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">반도체 데이터분석에서의 AB-Test (Two-Sample Test)</h1>
+      <h1 class="title">Semiconductor Data AB-Test #2</h1>
                   <div>
         <div class="description">
-          반도체 데이터 리뷰의 지표 고찰
+          계층 모델로 랏성(LOT Effect) 분석
         </div>
       </div>
-                          <div class="quarto-categories">
-                <div class="quarto-category">Statistics</div>
-                <div class="quarto-category">Data Science</div>
-              </div>
-                  </div>
+                </div>
   </div>
     
   
@@ -139,7 +146,7 @@ ul.task-list li input[type="checkbox"] {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">March 31, 2026</p>
+        <p class="date">April 19, 2026</p>
       </div>
     </div>
     
@@ -149,8 +156,61 @@ ul.task-list li input[type="checkbox"] {
   
   </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+      <a href="../../index.html" class="sidebar-logo-link">
+      <img src="../../profile.jpg" alt="" class="sidebar-logo light-content py-0 d-lg-inline d-none">
+      <img src="../../profile.jpg" alt="" class="sidebar-logo dark-content py-0 d-lg-inline d-none">
+      </a>
+      <div class="sidebar-tools-main">
+    <a href="https://github.com/parktj4264" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-github"></i></a>
+</div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Menu</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Home</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../about.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">About</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">목차</h2>
+   
+  <ul>
+  <li><a href="#section" id="toc-section" class="nav-link active" data-scroll-target="#section"></a></li>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link" data-scroll-target="#introduction">1. Introduction</a></li>
+  </ul>
+</nav>
+    </div>
 <!-- main -->
 <main class="content quarto-banner-title-block" id="quarto-document-content">
 
@@ -158,16 +218,120 @@ ul.task-list li input[type="checkbox"] {
 
 
 
-<p>나는 메모리 반도체<em>(특히 Nand Flash)</em>를 평가하고 분석하는 팀에 있다. 정말 말 그대로 반도체를 만들고나면 고객에게 반도체를 팔기위해 여러 Test를 한다. 여기서 많이들 들어봤을 <strong>수율</strong>이라는 개념이 나온다.</p>
-<p>이때, 정말 많은 데이터들이 나오는데 나는 이 평가를 하며 나오는 모든 데이터를 다 보는 그룹에 속해있다. EDS 같은 전기적 테스트 데이터, Chip 수준 품질 지표, Nand의 Block 패턴처럼 Wafer와 Chip에서의 벌어지는 일을 드러내는 신호 데이터들이 주요 대상이다. 이 데이터는 물량 선별<em>(쉽게 말하면 Wafer와 Chip의 Tier를 매긴다..!)</em>, 물량 공급 판단, 불량 대응 같은 업무에도 쓰이고, 기존 condition의 데이터와 새로운 개발 물량의 데이터를 비교하는 리뷰 업무도 진행한다.</p>
-<p><img src="images/paste-1.png" class="img-fluid" width="300"></p>
-<section id="data-review-board" class="level2">
-<h2 class="anchored" data-anchor-id="data-review-board">1. Data Review Board</h2>
+<section id="section" class="level2">
+<h2 class="anchored" data-anchor-id="section"></h2>
+</section>
+<section id="introduction" class="level1">
+<h1>1. Introduction</h1>
+<p>추가예정입니다</p>
 
 
 </section>
 
-</main> <!-- /main -->
+<a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a></main> <!-- /main -->
+<div class="custom-post-list-container mt-5">
+  <h4 class="custom-post-list-title">
+      <i class="bi bi-card-list me-2"></i> 전체 글 목록
+  </h4>
+  <ul id="custom-post-list" class="custom-post-list">
+    <li class="skeleton-loader" style="list-style:none; color:#888;">목록을 불러오는 중입니다...</li>
+  </ul>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", async function() {
+  try {
+    const listingsRes = await fetch('/listings.json').catch(() => null);
+    if (!listingsRes) return;
+
+    const listingsRaw = await listingsRes.json();
+    const listingObj = listingsRaw.find(l => l.listing === "/index.html" || l.listing === "index.html" || l.listing === "/");
+    if (!listingObj || !listingObj.items) return;
+    
+    // Normalize paths in the items list to start with "/"
+    const allPostsRaw = listingObj.items.map(item => item.startsWith('/') ? item : '/' + item);
+    
+    const listElement = document.getElementById('custom-post-list');
+    listElement.innerHTML = '';
+    
+    // Determine the current page's normalized path
+    let currentPath = window.location.pathname;
+    if (currentPath.endsWith('/')) {
+        currentPath += 'index.html';
+    } else if (!currentPath.endsWith('.html')) {
+        currentPath += '/index.html';
+    }
+    
+    // Attempt to match the current path in allPostsRaw
+    let currentIndex = allPostsRaw.findIndex(p => p === currentPath);
+    if (currentIndex === -1) {
+        currentIndex = allPostsRaw.findIndex(p => p === currentPath.replace('index.html', ''));
+    }
+    if (currentIndex === -1) {
+        currentIndex = 0;
+    }
+    
+    // We want to show a sliding window of max 5 posts
+    let startIdx = 0;
+    const itemsToShow = 5;
+    if (currentIndex > -1) {
+       startIdx = Math.max(0, currentIndex - 2); 
+       if (startIdx + itemsToShow > allPostsRaw.length) {
+          startIdx = Math.max(0, allPostsRaw.length - itemsToShow);
+       }
+    }
+    
+    const postsToShow = allPostsRaw.slice(startIdx, startIdx + itemsToShow);
+    
+    // Fetch titles efficiently in parallel from the actual post HTML
+    const titlePromises = postsToShow.map(async (postPath) => {
+        try {
+            const res = await fetch(postPath);
+            const html = await res.text();
+            const doc = new DOMParser().parseFromString(html, 'text/html');
+            const titleEl = doc.querySelector('h1.title') || doc.querySelector('title');
+            let titleText = titleEl ? titleEl.textContent : postPath;
+            if (titleEl && titleEl.tagName === 'TITLE') {
+                titleText = titleText.split('|')[0].trim();
+            }
+            return { path: postPath, title: titleText };
+        } catch(e) {
+            return { path: postPath, title: "게시글 조회를 실패했습니다." };
+        }
+    });
+
+    const postsData = await Promise.all(titlePromises);
+
+    postsData.forEach(post => {
+      const li = document.createElement('li');
+      li.className = 'custom-post-item';
+      
+      const isCurrent = (post.path === currentPath) || (post.path === currentPath.replace('index.html', ''));
+      if (isCurrent) {
+         li.classList.add('current');
+      }
+      
+      const a = document.createElement('a');
+      a.href = post.path; 
+      a.textContent = post.title;
+      
+      if (isCurrent) {
+        const badge = document.createElement('span');
+        badge.className = 'current-badge';
+        badge.textContent = '현재글';
+        a.prepend(badge); 
+      }
+      
+      li.appendChild(a);
+      listElement.appendChild(li);
+    });
+
+  } catch (err) {
+    console.error("Could not load related posts list.", err);
+    document.getElementById('custom-post-list').innerHTML = '<li style="list-style:none;">게시글 목록을 불러올 수 없습니다.</li>';
+  }
+});
+</script>
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
     const icon = "";
