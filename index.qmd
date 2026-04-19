@@ -1,13 +1,16 @@
 ---
 title: "Statistical Data Science"
-subtitle: 'Statistics, Data Science, and Thinking with Data'
-listing:
-  contents: posts
-  sort: "date desc"
-  type: default
-  categories: true
-  sort-ui: false
-  filter-ui: false
-page-layout: full
-title-block-banner: true
+subtitle: "Statistics, Data Science, and Thinking with Data"
+page-layout: article
 ---
+
+## 환영합니다! 👋
+
+**T.J.PARK**의 블로그에 오신 것을 환영합니다.
+
+수학과 통계학을 전공하고 반도체 데이터 분석을 하며 경험하는 통계적 인사이트를 기록합니다.
+
+-   좌측 메뉴의 [**Posts**](posts.qmd)를 누르시면 전체 게시글을 확인하실 수 있습니다.
+-   [**About**](about.qmd) 메뉴에서는 제 이력을 보실 수 있습니다.
+
+감사합니다.

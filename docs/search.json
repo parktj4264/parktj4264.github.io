@@ -4,10 +4,8 @@
     "href": "index.html",
     "title": "Statistical Data Science",
     "section": "",
-    "text": "Semiconductor Data AB-Test #2\n\n\n\nStatistics\n\nData Science\n\nDRB\n\n\n\n계층 모델로 랏성(LOT Effect) 분석\n\n\n\n\n\nApr 19, 2026\n\n\nTaejun Park\n\n\n\n\n\n\n\n\n\n\n\n\nSemiconductor Data AB-Test #1\n\n\n\nStatistics\n\nData Science\n\nDRB\n\n\n\n반도체 데이터 AB-Test 지표 고찰\n\n\n\n\n\nMar 31, 2026\n\n\nTaejun Park\n\n\n\n\n\nNo matching items\n Back to top",
+    "text": "T.J.PARK의 블로그에 오신 것을 환영합니다.\n수학과 통계학을 전공하고 반도체 데이터 분석을 하며 경험하는 통계적 인사이트를 기록합니다.\n\n좌측 메뉴의 Posts를 누르시면 전체 게시글을 확인하실 수 있습니다.\nAbout 메뉴에서는 제 이력을 보실 수 있습니다.\n\n감사합니다.",
     "crumbs": [
-      "Home",
-      "Menu",
       "Home"
     ]
   },
@@ -19,7 +17,6 @@
     "text": "경희대학교 수학과 (2015.03 - 2021.02)\n서울대학교 통계학과 석사, 공간통계연구실 (2021.03 - 2023.08)",
     "crumbs": [
       "Home",
-      "Menu",
       "About"
     ]
   },
@@ -31,7 +28,6 @@
     "text": "경희대학교 수학과 (2015.03 - 2021.02)\n서울대학교 통계학과 석사, 공간통계연구실 (2021.03 - 2023.08)",
     "crumbs": [
       "Home",
-      "Menu",
       "About"
     ]
   },
@@ -43,7 +39,6 @@
     "text": "경력\n삼성전자 DS 메모리반도체 Flash PE, 데이터사이언티스트 (2024.03 - 현재)",
     "crumbs": [
       "Home",
-      "Menu",
       "About"
     ]
   },
@@ -55,7 +50,6 @@
     "text": "인턴\nAI Researcher, AITRICS (2023.11 - 2024.02)\nRA, The Boston Consulting Group (2022.05 - 2022.06)",
     "crumbs": [
       "Home",
-      "Menu",
       "About"
     ]
   },
@@ -149,5 +143,26 @@
     "title": "Semiconductor Data AB-Test #1",
     "section": "Appendix E. Mean Shift와 Spread Shift의 2차원 직교 분해",
     "text": "Appendix E. Mean Shift와 Spread Shift의 2차원 직교 분해\n결과적으로 단일 지표 하나로 이분산 상황의 DGP를 완벽히 묘사할 수는 없다. 따라서 DRB(Data Review Board) 대시보드 설계 시, 평균 이동과 산포 변동을 직교(Orthogonal)하는 두 개의 축으로 분리하여 평가하는 것이 가장 수리적으로 안전한 접근이다.\n산포의 변동을 측정하는 동반 지표(Spread companion metric)로 로그 분산비(Log Variance Ratio)를 정의할 수 있다.\n\\[V = \\log\\left(\\frac{S_T}{S_R}\\right)\\]\n이 로그 변환은 비율의 비대칭성을 교정하며, 중심극한정리에 의해 정규분포로의 근사가 용이하다는 해석적 이점을 갖는다. 이를 통해 \\((\\widehat{\\Delta}_G, V)\\)의 2차원 위상 평면을 구축하면, 평균은 정상이지만 산포가 붕괴된 불량(\\(V \\gg 0\\))과, 산포는 유지된 채 조건만 이동한 정상적 Shift(\\(\\widehat{\\Delta}_G &gt; 0, V \\approx 0\\))를 단일 구조 내에서 수학적으로 분리해 낼 수 있다."
+  },
+  {
+    "objectID": "posts.html",
+    "href": "posts.html",
+    "title": "Posts",
+    "section": "",
+    "text": "Semiconductor Data AB-Test #2\n\n\n\nStatistics\n\nData Science\n\nDRB\n\n\n\n계층 모델로 랏성(LOT Effect) 분석\n\n\n\n\n\nApr 19, 2026\n\n\nTaejun Park\n\n\n\n\n\n\n\n\n\n\n\n\nSemiconductor Data AB-Test #1\n\n\n\nStatistics\n\nData Science\n\nDRB\n\n\n\n반도체 데이터 AB-Test 지표 고찰\n\n\n\n\n\nMar 31, 2026\n\n\nTaejun Park\n\n\n\n\n\nNo matching items\n Back to top",
+    "crumbs": [
+      "Home",
+      "Posts"
+    ]
+  },
+  {
+    "objectID": "index.html#환영합니다",
+    "href": "index.html#환영합니다",
+    "title": "Statistical Data Science",
+    "section": "",
+    "text": "T.J.PARK의 블로그에 오신 것을 환영합니다.\n수학과 통계학을 전공하고 반도체 데이터 분석을 하며 경험하는 통계적 인사이트를 기록합니다.\n\n좌측 메뉴의 Posts를 누르시면 전체 게시글을 확인하실 수 있습니다.\nAbout 메뉴에서는 제 이력을 보실 수 있습니다.\n\n감사합니다.",
+    "crumbs": [
+      "Home"
+    ]
   }
 ]

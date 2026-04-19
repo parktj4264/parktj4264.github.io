@@ -15,6 +15,8 @@ website:
     left:
       - text: "Home"
         href: index.qmd
+      - text: "Posts"
+        href: posts.qmd
       - text: "About"
         href: about.qmd
   sidebar:
@@ -22,12 +24,12 @@ website:
     search: true
     logo: profile.jpg
     contents:
-      - section: "Menu"
-        contents:
-          - text: "Home"
-            href: index.qmd
-          - text: "About"
-            href: about.qmd
+      - text: "Home"
+        href: index.qmd
+      - text: "Posts"
+        href: posts.qmd
+      - text: "About"
+        href: about.qmd
     tools:
       - icon: github
         href: https://github.com/parktj4264
