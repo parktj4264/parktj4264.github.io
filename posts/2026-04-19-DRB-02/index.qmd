@@ -1,10 +1,10 @@
-﻿---
+---
 title: "Semiconductor Data AB-Test #2"
 description: "계층 모델로 랏성(LOT Effect) 분석"
 author: "Taejun Park"
 date: "2026-04-19"
 categories: [Statistics, Data Science, DRB]
-image: "thumbnail.png"
+image: "thumbnail2.png"
 format:
   html:
     code-fold: true
@@ -436,7 +436,7 @@ Z_i =
 $$
 
 $$
-\mathrm{Max_Lot_Z} =
+\mathrm{Max\_Lot\_Z} =
 \max_i |Z_i|
 $$
 
@@ -1177,7 +1177,7 @@ Z_i =
 $$
 
 $$
-\mathrm{Max_Lot_Z} =
+\mathrm{Max\_Lot\_Z} =
 \max_i |Z_i|
 $$
 
@@ -1203,7 +1203,7 @@ $$
 따라서 master-level 진단치는
 
 $$
-\mathrm{Max_Lot_Z}^{\ast} =
+\mathrm{Max\_Lot\_Z}^{\ast} =
 \max_i
 \left|
 Z_i^{\mathrm{cond}}

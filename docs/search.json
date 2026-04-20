@@ -138,5 +138,194 @@
     "title": "Semiconductor Data AB-Test #1",
     "section": "Appendix E. Mean Shift와 Spread Shift의 2차원 직교 분해",
     "text": "Appendix E. Mean Shift와 Spread Shift의 2차원 직교 분해\n결과적으로 단일 지표 하나로 이분산 상황의 DGP를 완벽히 묘사할 수는 없다. 따라서 DRB(Data Review Board) 대시보드 설계 시, 평균 이동과 산포 변동을 직교(Orthogonal)하는 두 개의 축으로 분리하여 평가하는 것이 가장 수리적으로 안전한 접근이다.\n산포의 변동을 측정하는 동반 지표(Spread companion metric)로 로그 분산비(Log Variance Ratio)를 정의할 수 있다.\n\\[V = \\log\\left(\\frac{S_T}{S_R}\\right)\\]\n이 로그 변환은 비율의 비대칭성을 교정하며, 중심극한정리에 의해 정규분포로의 근사가 용이하다는 해석적 이점을 갖는다. 이를 통해 \\((\\widehat{\\Delta}_G, V)\\)의 2차원 위상 평면을 구축하면, 평균은 정상이지만 산포가 붕괴된 불량(\\(V \\gg 0\\))과, 산포는 유지된 채 조건만 이동한 정상적 Shift(\\(\\widehat{\\Delta}_G &gt; 0, V \\approx 0\\))를 단일 구조 내에서 수학적으로 분리해 낼 수 있다."
+  },
+  {
+    "objectID": "posts/2026-04-19-DRB-02/index.html",
+    "href": "posts/2026-04-19-DRB-02/index.html",
+    "title": "Semiconductor Data AB-Test #2",
+    "section": "",
+    "text": "나는 예전부터 우리 데이터의 구조를 볼 때마다 계층모델을 공부해보고 싶다는 생각을 했다.\n반도체 테스트 데이터는 겉으로는 하나의 큰 테이블처럼 보인다. 행은 많고, 컬럼도 많고, 숫자도 많다. 하지만 그 안을 조금만 들여다보면 데이터는 절대 평평하지 않다. LOT이 있고, 그 아래 Wafer가 있고, 그 아래 Chip이 있고, 다시 MAT, Block 같은 더 작은 단위들이 이어진다.\n\\[\n\\text{LOT} \\rightarrow \\text{Wafer} \\rightarrow \\text{Chip} \\rightarrow \\text{MAT} \\rightarrow \\text{Block}\n\\]\n처음에는 이 구조를 그냥 업무 도메인의 복잡함 정도로 생각했다. 그런데 데이터를 오래 보다 보니, 이 계층 구조는 단순한 관리 단위가 아니었다. 통계적으로도 꽤 중요한 의미를 가지고 있었다.\n같은 LOT 안의 Wafer들은 서로 완전히 독립적이지 않고, 같은 Wafer 안의 Chip들도 서로 비슷한 환경을 공유한다. 더 아래 단위로 내려가도 마찬가지다. 데이터는 독립적인 점들의 모음이 아니라, 서로 묶여 있는 관측값들의 계층 구조였다.\n그러다 보니 자연스럽게 이런 질문이 생겼다.\n우리는 지금 정말 올바른 단위를 표본으로 세고 있는가?\n이번 글은 이 질문에서 출발한다."
+  },
+  {
+    "objectID": "posts/2026-04-19-DRB-02/index.html#section",
+    "href": "posts/2026-04-19-DRB-02/index.html#section",
+    "title": "Semiconductor Data AB-Test #2",
+    "section": "",
+    "text": "나는 예전부터 우리 데이터의 구조를 볼 때마다 계층모델을 공부해보고 싶다는 생각을 했다.\n반도체 테스트 데이터는 겉으로는 하나의 큰 테이블처럼 보인다. 행은 많고, 컬럼도 많고, 숫자도 많다. 하지만 그 안을 조금만 들여다보면 데이터는 절대 평평하지 않다. LOT이 있고, 그 아래 Wafer가 있고, 그 아래 Chip이 있고, 다시 MAT, Block 같은 더 작은 단위들이 이어진다.\n\\[\n\\text{LOT} \\rightarrow \\text{Wafer} \\rightarrow \\text{Chip} \\rightarrow \\text{MAT} \\rightarrow \\text{Block}\n\\]\n처음에는 이 구조를 그냥 업무 도메인의 복잡함 정도로 생각했다. 그런데 데이터를 오래 보다 보니, 이 계층 구조는 단순한 관리 단위가 아니었다. 통계적으로도 꽤 중요한 의미를 가지고 있었다.\n같은 LOT 안의 Wafer들은 서로 완전히 독립적이지 않고, 같은 Wafer 안의 Chip들도 서로 비슷한 환경을 공유한다. 더 아래 단위로 내려가도 마찬가지다. 데이터는 독립적인 점들의 모음이 아니라, 서로 묶여 있는 관측값들의 계층 구조였다.\n그러다 보니 자연스럽게 이런 질문이 생겼다.\n우리는 지금 정말 올바른 단위를 표본으로 세고 있는가?\n이번 글은 이 질문에서 출발한다."
+  },
+  {
+    "objectID": "posts/2026-04-19-DRB-02/index.html#drb에서-우리는-b만-바꾸고-싶다",
+    "href": "posts/2026-04-19-DRB-02/index.html#drb에서-우리는-b만-바꾸고-싶다",
+    "title": "Semiconductor Data AB-Test #2",
+    "section": "1. DRB에서 우리는 B만 바꾸고 싶다",
+    "text": "1. DRB에서 우리는 B만 바꾸고 싶다\n우리 팀은 DRB(Data Review Board)라는 이름으로, 이미 충분히 성격을 파악한 기준 물량(reference)과 새로운 조건의 target 물량을 비교해 risk를 검토한다. 겉으로 보면 A/B test와 비슷하다. 기준 조건이 있고, 비교 조건이 있고, 두 집단 사이의 차이를 본다.\n실제로 DRB에서 자주 하고 싶은 질문은 이런 형태다.\n공정 A, B, C가 있다고 하자. 우리는 공정 B의 변경 또는 개선 효과를 보고 싶다.\n그러면 이상적으로는 공정 A와 C는 같게 맞추고, 공정 B만 다르게 구성한 물량을 비교하고 싶다.\n\\[\n\\text{Reference}:\\quad A + B_{\\text{POR}} + C\n\\]\n\\[\n\\text{Target}:\\quad A + B_{\\text{Changed}} + C\n\\]\n이상적인 목표는 단순하다.\n\\[\n\\text{Observed Difference} \\approx \\text{Effect of Process B}\n\\]\n즉, 관측된 차이가 대부분 공정 B의 변화 때문이라고 말하고 싶은 것이다.\n물론 현실에서는 완벽한 실험 설계를 만들기 어렵다. 그래도 DRB에서는 가능한 한 많은 조건을 통제하려고 한다. 공정 흐름, 설비, 기간, product, test condition, binning 기준 등 최대한 맞출 수 있는 것들을 맞춘다. 이렇게 해야 “B만 다르게 해서 비교했다”는 말을 조금이라도 할 수 있다.\n하지만 아무리 통제하려고 해도 끝까지 남는 것이 있다.\n바로 LOT variation이다."
+  },
+  {
+    "objectID": "posts/2026-04-19-DRB-02/index.html#이번-글에서-보는-msr-bad-block-계열-지표",
+    "href": "posts/2026-04-19-DRB-02/index.html#이번-글에서-보는-msr-bad-block-계열-지표",
+    "title": "Semiconductor Data AB-Test #2",
+    "section": "2. 이번 글에서 보는 MSR: Bad Block 계열 지표",
+    "text": "2. 이번 글에서 보는 MSR: Bad Block 계열 지표\n이번 글에서는 예시로 BB(Bad Block) 계열 MSR를 생각한다.\nNAND Flash에서 Bad Block은 매우 중요한 품질 신호다. 모든 MSR가 같은 방향으로 해석되는 것은 아니지만, 여기서 다루는 BB 계열 MSR는 단순하게 이렇게 보자.\n\\[\n\\text{BB 계열 MSR가 높아진다}\n\\quad \\Rightarrow \\quad\n\\text{열화 또는 Risk 증가}\n\\]\n즉, target의 BB 계열 MSR 평균이 reference보다 높아지면, 그것은 좋은 신호가 아니라 열화 신호다.\n이 방향성을 명확히 해야 한다. 왜냐하면 이 글의 예시에서 “Target 평균이 상승했다”는 말은 “좋아졌다”가 아니라, Bad Block 관련 risk가 커졌다는 뜻이기 때문이다.\n그래서 이번 글의 실무 질문은 이렇게 바뀐다.\n\nTarget 조건에서 BB 계열 MSR가 높아졌다면, 이것은 공정 B 때문에 생긴 열화인가? 아니면 특정 LOT 하나의 랏성인가?\n\n이 질문이 이번 글의 핵심이다."
+  },
+  {
+    "objectID": "posts/2026-04-19-DRB-02/index.html#편의-질문-얼마나-움직였는가",
+    "href": "posts/2026-04-19-DRB-02/index.html#편의-질문-얼마나-움직였는가",
+    "title": "Semiconductor Data AB-Test #2",
+    "section": "3. 1편의 질문: 얼마나 움직였는가?",
+    "text": "3. 1편의 질문: 얼마나 움직였는가?\n지난 글에서는 DRB에서 차이를 어떤 잣대로 재야 하는지 이야기했다. 특히 target 조건의 산포가 커질 수 있는 상황에서 pooled SD를 쓰면 mean shift가 희석될 수 있고, 그래서 reference SD를 기준으로 삼는 Glass’s Delta가 DRB의 질문과 잘 맞을 수 있다는 내용이었다.\n\\[\n\\Delta_{\\text{Glass}} =\n\\frac{\\mu_{\\text{target}}-\\mu_{\\text{reference}}}\n{\\sigma_{\\text{reference}}}\n\\]\n이 식이 묻는 질문은 명확하다.\n\n우리가 신뢰하는 baseline variability를 기준으로 봤을 때, target의 중심은 얼마나 이동했는가?\n\n즉, Glass’s Delta는 얼마나 움직였는가를 꽤 잘 말해준다. 기준 물량의 안정적인 산포를 자로 삼아서, target 평균이 얼마나 멀어졌는지 보여준다.\n하지만 Glass’s Delta도 평균 차이를 기반으로 한다. 따라서 target 평균이 특정 LOT 하나 때문에 높아진 것이라면, Glass’s Delta도 커질 수 있다.\nBB 계열 MSR에서는 이것이 더 민감하다.\nTarget 평균이 올라갔다. Glass’s Delta도 1 sigma를 넘었다. 그러면 언뜻 보기에는 “공정 B 변경 이후 열화가 발생했다”고 판단할 수 있다.\n하지만 만약 그 상승이 target 전체에서 골고루 발생한 것이 아니라, 특정 LOT 하나에서만 발생했다면 어떨까?\n이게 이번 글의 출발점이다.\nGlass’s Delta는 “얼마나 움직였는가”를 말해준다. 하지만 “누가 움직였는가” 까지 말해주지는 않는다.\n그 차이가 정말 공정 B 때문인지, 아니면 특정 LOT 하나의 랏성인지는 별도의 질문이다.\n1편의 질문이 이것이었다면,\n\\[\n\\text{How large is the shift?}\n\\]\n이번 글의 질문은 이것이다.\n\\[\n\\text{Where did the shift come from?}\n\\]"
+  },
+  {
+    "objectID": "posts/2026-04-19-DRB-02/index.html#끝까지-남는-비통제-요인-lot-variation",
+    "href": "posts/2026-04-19-DRB-02/index.html#끝까지-남는-비통제-요인-lot-variation",
+    "title": "Semiconductor Data AB-Test #2",
+    "section": "4. 끝까지 남는 비통제 요인: LOT Variation",
+    "text": "4. 끝까지 남는 비통제 요인: LOT Variation\nDRB에서 우리는 가능하면 공정 B의 효과만 보고 싶다. 공정 A, C는 같게 맞추고, B만 POR 조건과 변경 조건으로 다르게 둔다.\n하지만 실제 데이터는 조금 더 심술궂다. 아무리 많은 조건을 맞추려고 해도, 끝까지 남는 변동이 있다.\n바로 LOT variation이다.\n어떤 LOT은 원래 높게 나온다. 어떤 LOT은 원래 낮게 나온다. 어떤 LOT은 특정 Wafer 구간에서 열화된다. 어떤 LOT은 챔버 상태나 시간 드리프트의 흔적을 안고 들어온다.\n그리고 가끔은 특정 LOT 하나가 target 그룹 전체의 평균을 끌어올려, 마치 공정 B 변경 이후 BB risk가 올라간 것처럼 보이게 만든다.\n그러면 관측된 차이는 사실 이렇게 봐야 한다.\n\\[\n\\text{Observed Difference} =\n\\text{Effect of Process B}\n+\n\\text{LOT Variation}\n+\n\\text{Wafer Noise}\n\\]\n우리가 원하는 것은 첫 번째 항이다.\n\\[\n\\text{Effect of Process B}\n\\]\n하지만 실제로는 두 번째 항인 LOT variation까지 함께 보고 있을 수 있다.\n이게 무서운 이유는 단순하다. target 물량에 우연히 높은 LOT이 포함되면, 평균 차이는 커진다. Glass’s Delta도 커질 수 있다. 하지만 그것이 공정 B의 영향이라는 보장은 없다.\n즉,\n\\[\n\\text{Large Shift} \\neq \\text{Process Effect}\n\\]\n이다.\n이 부등식 하나가 이번 글의 핵심이다."
+  },
+  {
+    "objectID": "posts/2026-04-19-DRB-02/index.html#데이터는-평평하지-않았다",
+    "href": "posts/2026-04-19-DRB-02/index.html#데이터는-평평하지-않았다",
+    "title": "Semiconductor Data AB-Test #2",
+    "section": "5. 데이터는 평평하지 않았다",
+    "text": "5. 데이터는 평평하지 않았다\n반도체 테스트 데이터는 보통 테이블 형태로 분석된다. 각 행이 Wafer일 수도 있고, Chip일 수도 있고, 더 작은 단위일 수도 있다.\n하지만 데이터가 테이블처럼 보인다고 해서 통계적으로도 평평한 것은 아니다.\n예를 들어 LOT당 Wafer가 20장 있고, reference/target 각각 5개 LOT가 있다고 하자. 그러면 Wafer 수는 200장이다. 겉보기에는 표본이 꽤 많다.\n하지만 이 200장이 정말 200개의 독립 표본일까?\n아니다.\n같은 LOT 안의 Wafer들은 같은 LOT 효과를 공유한다. 같은 생산 맥락, 같은 시간대, 비슷한 장비 상태, 같은 상위 조건의 영향을 공유한다. 따라서 같은 LOT 안의 Wafer들은 서로 완전히 독립이라고 보기 어렵다.\n이 순간부터 문제는 단순한 two-sample test가 아니다. 데이터는 계층 구조를 가진다.\n\\[\n\\text{LOT} \\rightarrow \\text{Wafer}\n\\]\n그리고 이 구조를 무시하면, 특정 LOT 하나가 만든 신호를 group-wide effect로 착각할 수 있다.\n실무적으로는 이렇게 말할 수 있다.\n\nWafer 수가 많다고 해서, LOT 수준의 증거가 자동으로 많아지는 것은 아니다.\n\n이 문장은 DRB에서 굉장히 중요하다. 공정 B의 영향을 보고 싶다면, Wafer가 몇 장인지뿐 아니라 몇 개의 LOT에서 같은 방향의 신호가 반복되었는지를 봐야 한다."
+  },
+  {
+    "objectID": "posts/2026-04-19-DRB-02/index.html#평균은-자주-맞지만-자주-속인다",
+    "href": "posts/2026-04-19-DRB-02/index.html#평균은-자주-맞지만-자주-속인다",
+    "title": "Semiconductor Data AB-Test #2",
+    "section": "6. 평균은 자주 맞지만, 자주 속인다",
+    "text": "6. 평균은 자주 맞지만, 자주 속인다\n평균은 편하다. Reference 평균과 Target 평균을 구하고, 그 차이를 보면 된다.\n하지만 LOT 구조가 있는 데이터에서 평균은 종종 범인을 숨긴다.\n예를 들어 target 그룹의 BB 계열 MSR 평균이 올라갔다고 하자. 이때 가능한 시나리오는 적어도 두 개다.\n첫 번째는 공정 영향에 의한 열화다. target 그룹의 LOT들이 비슷한 방향으로 골고루 올라갔다.\n두 번째는 특정 LOT의 랏성이다. 대부분의 LOT는 그대로인데, 특정 LOT 하나만 비정상적으로 높아서 그룹 평균을 끌어올렸다.\n이 둘은 Wafer를 한데 섞어 평균만 보면 똑같이 “상승”이다. 하지만 실무 의미는 완전히 다르다.\n전자는 공정 B 자체가 영향을 준 것일 수 있다. 후자는 LOT 특이점, 장비 이슈, 챔버 열화, 시간 드리프트 같은 원인을 먼저 의심해야 한다.\n즉, DRB에서 중요한 건 단순한 mean shift가 아니라,\n\\[\n\\text{그 mean shift가 어느 계층에서 발생했는가}\n\\]\n이다.\n평균은 그 질문에 혼자 답하지 못한다. 평균은 조별 과제 점수는 알려주지만, 누가 하드캐리했는지는 알려주지 않는다. 통계표 안에 숨어 있는 조별 과제 빌런. 아주 교활하다."
+  },
+  {
+    "objectID": "posts/2026-04-19-DRB-02/index.html#기존에는-랏성을-눈으로-판단했다",
+    "href": "posts/2026-04-19-DRB-02/index.html#기존에는-랏성을-눈으로-판단했다",
+    "title": "Semiconductor Data AB-Test #2",
+    "section": "7. 기존에는 랏성을 눈으로 판단했다",
+    "text": "7. 기존에는 랏성을 눈으로 판단했다\n사실 실무에서는 이미 랏성을 본다.\n특정 지표가 튀면, 엔지니어와 데이터 분석가는 자연스럽게 LOT별 plot을 펼쳐본다. 어떤 LOT이 높게 뜨는지, 특정 Wafer 구간에서만 튀는지, target 전체가 같이 움직이는지, 아니면 특정 LOT 하나만 이상한지 본다.\n이건 매우 중요한 과정이다. 그리고 솔직히 말하면, 현업 엔지니어의 눈은 꽤 좋다.\n문제는 이 판단이 너무 자주 눈판단에 머문다는 점이다.\n\n“이 LOT 하나가 좀 튀는 것 같은데요?”\n“이건 전체 열화라기보다 랏성 같네요.”\n“그래프 보면 특정 LOT가 끌어올린 것 같습니다.”\n\n이런 말들은 실무적으로 의미가 있다. 하지만 반복 가능한 지표로 남기기 어렵다.\n사람마다 기준이 다를 수 있고, 리뷰 상황에 따라 판단이 달라질 수 있고, 수백 개 MSR를 한꺼번에 봐야 할 때는 눈으로 모든 것을 안정적으로 판단하기 어렵다.\n그래서 내가 하고 싶은 것은 이 감각을 없애는 것이 아니다. 오히려 반대다.\n현업의 눈판단을 통계적 진단 지표로 번역하고 싶다.\n“랏성이 있어 보인다”를 “LOT random effect diagnostic에서 특정 LOT가 얼마나 튀었다”로 바꾸고 싶다.\n“이건 특정 LOT 하나가 끌어올린 것 같다”를 “Max_Lot_Z가 높고 suspect LOT가 명확하다”로 바꾸고 싶다.\n즉, 계층모델은 현업 판단을 대체하는 도구가 아니라, 그 판단을 더 일관되게 기록하고 재현하게 해주는 도구다."
+  },
+  {
+    "objectID": "posts/2026-04-19-DRB-02/index.html#계층모델은-공정효과와-lot-효과를-분리해-보려는-시도다",
+    "href": "posts/2026-04-19-DRB-02/index.html#계층모델은-공정효과와-lot-효과를-분리해-보려는-시도다",
+    "title": "Semiconductor Data AB-Test #2",
+    "section": "8. 계층모델은 공정효과와 LOT 효과를 분리해 보려는 시도다",
+    "text": "8. 계층모델은 공정효과와 LOT 효과를 분리해 보려는 시도다\n이 문제를 가장 자연스럽게 다루는 틀 중 하나가 linear mixed-effects model이다.\n공정 B가 POR인지 변경공정인지 나타내는 indicator를 \\(T_i\\)라고 하자.\n\\[\nT_i =\n\\begin{cases}\n0, & \\text{POR} \\\\\n1, & \\text{Changed Process B}\n\\end{cases}\n\\]\n가장 단순한 LOT-Wafer 구조의 모형은 이렇게 쓸 수 있다.\n\\[\nY_{ij} =\n\\beta_0\n+\n\\beta_1 T_i\n+\nu_i\n+\n\\varepsilon_{ij}\n\\]\n여기서\n\\[\nu_i \\sim N(0,\\tau^2),\n\\qquad\n\\varepsilon_{ij} \\sim N(0,\\sigma^2)\n\\]\n라고 두자.\n각 기호의 의미는 이렇다.\n\n\\(Y_{ij}\\): \\(i\\)번째 LOT의 \\(j\\)번째 Wafer에서 측정된 BB 계열 MSR\n\\(\\beta_0\\): POR 기준 평균\n\\(\\beta_1\\): 우리가 알고 싶은 공정 B 변경 효과\n\\(u_i\\): LOT별 random effect\n\\(\\varepsilon_{ij}\\): Wafer-level residual noise\n\n이 모델이 말하는 것은 단순하다.\n\\[\n\\text{Observed Data} =\n\\text{Process B Effect}\n+\n\\text{LOT Effect}\n+\n\\text{Wafer Noise}\n\\]\n우리가 알고 싶은 것은 \\(\\beta_1\\)이다. 하지만 naive 평균 비교는 \\(\\beta_1\\)과 \\(u_i\\)를 한 그릇에 섞어버린다.\n계층모델은 이 둘을 다시 분리해 보려는 시도다.\n관측값의 변동은 크게 두 층으로 나눌 수 있다.\n하나는 LOT와 LOT 사이의 변동이고, 다른 하나는 같은 LOT 안에서 Wafer끼리 흔들리는 변동이다.\n\\[\n\\mathrm{Var}(Y_{ij}) =\n\\tau^2+\\sigma^2\n\\]\n여기서 \\(\\tau^2\\)는 between-lot variation, \\(\\sigma^2\\)는 within-lot variation이다.\n실무 언어로 옮기면 이렇다.\n\n\\(\\tau^2\\)가 크다 → 랏성이 크다. LOT-to-LOT variation이 크다.\n\\(\\sigma^2\\)가 크다 → 같은 LOT 안의 Wafer noise가 크다.\n\n중요한 건 이 둘을 섞어 보지 않는 것이다. 많은 착시는 바로 이 두 variance component를 한꺼번에 평균 안에 말아넣을 때 생긴다."
+  },
+  {
+    "objectID": "posts/2026-04-19-DRB-02/index.html#랏성이라는-말은-수학적으로는-icc다",
+    "href": "posts/2026-04-19-DRB-02/index.html#랏성이라는-말은-수학적으로는-icc다",
+    "title": "Semiconductor Data AB-Test #2",
+    "section": "9. 랏성이라는 말은 수학적으로는 ICC다",
+    "text": "9. 랏성이라는 말은 수학적으로는 ICC다\n현업에서는 “랏성이 뜬다”는 표현을 자주 쓴다. 통계 언어로 옮기면, 이건 거의 intra-class correlation, 즉 ICC에 가깝다.\nrandom intercept model에서 ICC는\n\\[\n\\rho =\n\\frac{\\tau^2}{\\tau^2+\\sigma^2}\n\\]\n로 정의된다.\n이 값은 “같은 LOT 안의 Wafer들이 얼마나 서로 닮아 있는가”를 뜻한다.\n\n\\(\\rho \\approx 0\\)이면 같은 LOT 안이라고 해서 특별히 더 닮지 않는다. Wafer들이 거의 독립처럼 움직인다.\n\\(\\rho\\)가 크면 같은 LOT 안의 Wafer들이 비슷한 방향으로 움직인다. 즉, LOT라는 상위 단위가 강하게 작동하고 있다는 뜻이다.\n\n이 식이 중요한 이유는, 이 순간부터 Wafer 100장이 Wafer 100개의 정보량을 뜻하지 않게 되기 때문이다.\n같은 LOT 안의 Wafer들이 비슷할수록, 우리는 비슷한 신호를 반복해서 보고 있다. 새로운 정보가 아니라 복사된 힌트에 가까워진다.\n복사 붙여넣기 증거는 멋있어 보이지만, 법정에서는 약하다. 통계 법정도 마찬가지다."
+  },
+  {
+    "objectID": "posts/2026-04-19-DRB-02/index.html#유효-표본수-wafer-수가-많아도-증거가-약한-이유",
+    "href": "posts/2026-04-19-DRB-02/index.html#유효-표본수-wafer-수가-많아도-증거가-약한-이유",
+    "title": "Semiconductor Data AB-Test #2",
+    "section": "10. 유효 표본수: Wafer 수가 많아도 증거가 약한 이유",
+    "text": "10. 유효 표본수: Wafer 수가 많아도 증거가 약한 이유\n이걸 조금 더 직관적으로 보자.\nLOT이 \\(J\\)개 있고, LOT당 Wafer 수가 \\(m\\)개라고 하자. 총 Wafer 수는\n\\[\nN=Jm\n\\]\n이다.\n그런데 LOT 내 상관이 존재하면 유효 표본수는 대략\n\\[\nN_{\\mathrm{eff}}\n\\approx\n\\frac{N}{1+(m-1)\\rho}\n\\]\n처럼 줄어든다.\n예를 들어 LOT당 Wafer가 \\(m=20\\)개이고, ICC가 \\(\\rho=0.3\\)이라고 하자. 그러면\n\\[\nN_{\\mathrm{eff}} \\approx \\frac{N}{1+19\\cdot 0.3} = \\frac{N}{6.7}\n\\]\n정도다.\n즉, Wafer가 100장 있어도 유효 표본수는 100이 아니라 15장 남짓한 수준으로 줄어들 수 있다.\n물론 실제 데이터에서는 unbalanced LOT size, missing Wafer, 공정 이력, chamber effect 때문에 더 복잡해진다. 그래도 메시지는 선명하다.\n같은 LOT 안의 Wafer가 서로 닮아 있다면, Wafer 수를 늘리는 전략은 생각보다 약하다.\n이건 DRB에서 중요한 감각이다. Wafer를 많이 모았다고 해서 “공정 B의 영향이 LOT를 넘어 반복된다”는 증거가 그만큼 쌓이는 것은 아니다.\nLOT 효과가 큰 문제에서는 Wafer 수보다 LOT 수가 훨씬 더 귀한 자원일 수 있다."
+  },
+  {
+    "objectID": "posts/2026-04-19-DRB-02/index.html#max_lot_z-눈으로-보던-랏성을-숫자로-만들기",
+    "href": "posts/2026-04-19-DRB-02/index.html#max_lot_z-눈으로-보던-랏성을-숫자로-만들기",
+    "title": "Semiconductor Data AB-Test #2",
+    "section": "11. Max_Lot_Z: 눈으로 보던 랏성을 숫자로 만들기",
+    "text": "11. Max_Lot_Z: 눈으로 보던 랏성을 숫자로 만들기\n여기서 실무적으로 아주 쓸 만한 휴리스틱이 나온다. mixed model을 적합한 뒤 ranef(model)을 보면 각 LOT의 random effect 요약값을 얻을 수 있다.\n정확히 말하면 이 값은 “진짜 LOT 효과 그 자체”라기보다, 데이터가 주어졌을 때의 conditional mode 또는 BLUP에 가깝다. 개별 LOT의 평균잔차를 그대로 보는 것이 아니라, 전체 데이터 구조를 반영해 적당히 shrinkage된 값이다.\n내가 자주 쓰는 방식은 이 값을 표준화해서, 가장 많이 튄 LOT가 얼마나 심하게 튀는지를 보는 것이다.\n\\[\n\\hat u_i =\n\\text{conditional mode of LOT } i\n\\]\n\\[\nZ_i =\n\\frac{\\hat u_i-\\bar u}{s_u}\n\\]\n\\[\n\\mathrm{Max\\_Lot\\_Z} =\n\\max_i |Z_i|\n\\]\n해석은 직관적이다.\n\nMax_Lot_Z가 1점대다 → LOT들이 고만고만하게 움직인다. → 집단 전체 열화 가능성이 상대적으로 높다.\nMax_Lot_Z가 2.5~3.0 근처로 치솟는다 → 특정 LOT 하나가 너무 많이 튄다. → 공정 B의 전체 영향보다 특정 LOT의 랏성을 먼저 의심해야 한다.\n\n이 지표의 목적은 분명하다.\n기존에는 LOT별 plot을 보고 눈으로 판단하던 것을, 이제는 반복 가능한 숫자로 만들고 싶다.\n물론 Max_Lot_Z는 formal test statistic이라기보다 LOT anomaly diagnostic이라고 부르는 게 더 맞다. 즉, 판결문이 아니라 수사 방향이다.\n그리고 하나 더 조심해야 한다. LOT 수가 아주 작으면, ranef 값을 단순 z-score로 표준화한 Max_Lot_Z는 말 그대로 descriptive diagnostic이다. “3-sigma니까 확률이 몇 %” 같은 식으로 읽으면 안 된다.\n이 친구는 정식 재판관이 아니라 수사반장이다. 직감은 좋지만, 판결문은 따로 써야 한다.\n더 엄밀하게 보려면 conditional variance를 함께 얻고, conditional standard error로 표준화한 diagnostic을 만들 수 있다. 이 내용은 appendix에서 조금 더 다룬다."
+  },
+  {
+    "objectID": "posts/2026-04-19-DRB-02/index.html#작은-시뮬레이션-공정-b-열화-vs-특정-lot의-랏성",
+    "href": "posts/2026-04-19-DRB-02/index.html#작은-시뮬레이션-공정-b-열화-vs-특정-lot의-랏성",
+    "title": "Semiconductor Data AB-Test #2",
+    "section": "12. 작은 시뮬레이션: 공정 B 열화 vs 특정 LOT의 랏성",
+    "text": "12. 작은 시뮬레이션: 공정 B 열화 vs 특정 LOT의 랏성\nReference/Target 각 5개 LOT가 있고, LOT당 20장 Wafer가 있다고 하자.\n이번 예시는 BB 계열 MSR를 가정한다. 따라서 값이 높을수록 열화 또는 risk 증가다.\n세 가지 상황을 만든다.\n\nBB_MSR1: 차이 없음\nBB_MSR2: Target 그룹의 특정 LOT 하나만 Wafer 번호가 뒤로 갈수록 값이 치솟음\nBB_MSR3: Target 그룹 전체 LOT가 골고루 상승\n\nWafer-level 평균만 보면 BB_MSR2와 BB_MSR3는 둘 다 “Target 평균 상승”으로 보일 수 있다. 하지만 계층모델 관점에서는 둘의 의미가 완전히 다르다.\nBB_MSR3는 group-wide degradation이다. BB_MSR2는 특정 LOT의 랏성이다.\n아래 코드는 이 차이를 보는 아주 단순한 예시다.\n\n\n👀 Mixed Model + Max_Lot_Z Simulation\nlibrary(data.table)\nlibrary(ggplot2)\nlibrary(lme4)\n\nset.seed(20260417)\n\n# ---------------------------------------------------------\n# 1. 데이터 생성: Reference/Target 각 5 LOT, LOT당 20 Wafer\n# ---------------------------------------------------------\nn_lots_per_group &lt;- 5\nn_wafers_per_lot &lt;- 20\n\nlot_table &lt;- data.table(\n  Group = rep(c(\"Reference\", \"Target\"), each = n_lots_per_group),\n  Lot_No = rep(1:n_lots_per_group, times = 2)\n)\n\nlot_table[, Lot_ID := paste0(\"Lot_\", Group, \"_\", Lot_No)]\n\ndt &lt;- lot_table[\n  , .(Wafer_No = 1:n_wafers_per_lot),\n  by = .(Group, Lot_ID)\n]\n\n# LOT-level effect와 wafer-level noise\nbase_mean &lt;- 100\ndt[, Lot_Eff := rnorm(1, mean = 0, sd = 0.5), by = Lot_ID]\ndt[, Wafer_Noise := rnorm(.N, mean = 0, sd = 1.0)]\n\n# ---------------------------------------------------------\n# 2. 세 가지 BB 계열 MSR 시나리오\n#    주의: 여기서는 값이 높을수록 열화/위험 증가로 해석한다.\n# ---------------------------------------------------------\n\n# BB_MSR1: 차이 없음\ndt[, BB_MSR1 := base_mean + Lot_Eff + Wafer_Noise]\n\n# BB_MSR2: 특정 LOT의 랏성\n# Target 그룹의 특정 LOT 하나만 wafer 번호가 뒤로 갈수록 값이 치솟음\ndt[, BB_MSR2 := base_mean + Lot_Eff + Wafer_Noise]\ndt[Lot_ID == \"Lot_Target_3\", BB_MSR2 := BB_MSR2 + (Wafer_No - 1) * 0.8]\n\n# BB_MSR3: 공정 영향에 의한 전체 열화\n# Target 그룹 전체가 골고루 상승\ndt[, BB_MSR3 := base_mean + Lot_Eff + Wafer_Noise + ifelse(Group == \"Target\", 1.5, 0)]\n\n# ---------------------------------------------------------\n# 3. 분석 함수\n# ---------------------------------------------------------\nanalyze_msr &lt;- function(target_col, data) {\n  fmla &lt;- as.formula(paste(target_col, \"~ Group + (1 | Lot_ID)\"))\n\n  # naive OLS: wafer를 전부 독립으로 본 경우\n  ols_model &lt;- lm(as.formula(paste(target_col, \"~ Group\")), data = data)\n  ols_p &lt;- summary(ols_model)$coefficients[\"GroupTarget\", \"Pr(&gt;|t|)\"]\n\n  # mixed model: LOT random intercept\n  lmm_model &lt;- lmer(fmla, data = data)\n\n  # lmer summary의 t value는 screening signal로만 사용\n  lmm_t &lt;- summary(lmm_model)$coefficients[\"GroupTarget\", \"t value\"]\n\n  # LOT별 conditional mode\n  re &lt;- ranef(lmm_model, condVar = TRUE)$Lot_ID\n  lot_eff &lt;- re[[\"(Intercept)\"]]\n  names(lot_eff) &lt;- rownames(re)\n\n  # 단순 Max_Lot_Z: ranef 값 자체를 표준화\n  simple_z &lt;- as.numeric(scale(lot_eff))\n  names(simple_z) &lt;- names(lot_eff)\n\n  max_lot_z &lt;- max(abs(simple_z))\n  suspect_lot &lt;- names(simple_z)[which.max(abs(simple_z))]\n\n  # conditional variance 기반 diagnostic\n  post_var &lt;- attr(re, \"postVar\")\n  cond_se &lt;- sqrt(post_var[1, 1, ])\n  names(cond_se) &lt;- rownames(re)\n\n  cond_z &lt;- lot_eff / cond_se\n  max_cond_z &lt;- max(abs(cond_z))\n\n  # baseline 기준 magnitude\n  mean_ref &lt;- mean(data[Group == \"Reference\"][[target_col]])\n  mean_target &lt;- mean(data[Group == \"Target\"][[target_col]])\n  sd_ref &lt;- sd(data[Group == \"Reference\"][[target_col]])\n\n  ref_sigma_shift &lt;- (mean_target - mean_ref) / sd_ref\n\n  # 간단한 해석 label\n  # BB 계열 MSR이므로 양의 shift는 열화 방향\n  status &lt;- fcase(\n    ref_sigma_shift &gt; 1 & abs(lmm_t) &gt;= 2 & max_lot_z &lt; 2.5,\n    \"Group-wide degradation candidate\",\n    ref_sigma_shift &gt; 1 & max_lot_z &gt;= 2.5,\n    \"LOT-specific anomaly candidate\",\n    abs(ref_sigma_shift) &lt;= 1,\n    \"No material shift\",\n    default = \"Review needed\"\n  )\n\n  data.table(\n    MSR = target_col,\n    Status = status,\n    OLS_p = round(ols_p, 4),\n    LMM_t_screening = round(lmm_t, 2),\n    Ref_Sigma_Shift = round(ref_sigma_shift, 2),\n    Max_Lot_Z = round(max_lot_z, 2),\n    Max_Cond_Z = round(max_cond_z, 2),\n    Suspect_Lot = suspect_lot\n  )\n}\n\nresults &lt;- rbindlist(\n  lapply(c(\"BB_MSR1\", \"BB_MSR2\", \"BB_MSR3\"), analyze_msr, data = dt)\n)\n\nresults\n\n\n       MSR                           Status  OLS_p LMM_t_screening\n    &lt;char&gt;                           &lt;char&gt;  &lt;num&gt;           &lt;num&gt;\n1: BB_MSR1                No material shift 0.0306            0.84\n2: BB_MSR2   LOT-specific anomaly candidate 0.0000            1.08\n3: BB_MSR3 Group-wide degradation candidate 0.0000            4.23\n   Ref_Sigma_Shift Max_Lot_Z Max_Cond_Z     Suspect_Lot\n             &lt;num&gt;     &lt;num&gt;      &lt;num&gt;          &lt;char&gt;\n1:            0.32      1.51       4.01 Lot_Reference_4\n2:            1.61      2.61      15.50    Lot_Target_3\n3:            1.60      1.51       4.01 Lot_Reference_4\n\n\n이 코드에서 보고 싶은 것은 딱 네 가지다.\n\nRef_Sigma_Shift → baseline 기준으로 얼마나 움직였는가 → BB 계열 MSR에서는 양수가 클수록 열화 방향\nLMM_t_screening → LOT random effect를 넣고도 group shift가 남는가\nMax_Lot_Z → 특정 LOT 하나가 다 끌어올린 것은 아닌가\nSuspect_Lot → 가장 수상한 LOT가 누구인가\n\nBB_MSR3는 Target 그룹 전체가 골고루 올라간다. 따라서 group-wide degradation 후보가 된다.\n반면 BB_MSR2는 평균만 보면 열화처럼 보일 수 있지만, 실제로는 Lot_Target_3 하나가 Wafer 번호가 뒤로 갈수록 치솟는 구조다. 이 경우 Max_Lot_Z와 suspect LOT를 함께 보면, “Target 평균 상승”이라는 말 뒤에 숨어 있는 특정 LOT의 랏성을 볼 수 있다."
+  },
+  {
+    "objectID": "posts/2026-04-19-DRB-02/index.html#시각화-표는-늦고-그림은-빠르다",
+    "href": "posts/2026-04-19-DRB-02/index.html#시각화-표는-늦고-그림은-빠르다",
+    "title": "Semiconductor Data AB-Test #2",
+    "section": "13. 시각화: 표는 늦고, 그림은 빠르다",
+    "text": "13. 시각화: 표는 늦고, 그림은 빠르다\n이런 문제는 표만 보면 잘 안 보일 때가 많다. LOT별로 펼쳐놓고, Wafer 번호를 alpha나 color로 표현하면 훨씬 빨리 보인다.\n\n\n📈 LOT-level Scatter Plot\ndt_long &lt;- melt(\n  dt,\n  measure.vars = c(\"BB_MSR1\", \"BB_MSR2\", \"BB_MSR3\"),\n  variable.name = \"MSR_Type\",\n  value.name = \"Value\"\n)\n\nmean_dt &lt;- dt_long[, .(Mean_Val = mean(Value)), by = .(MSR_Type, Group)]\n\nggplot(dt_long, aes(x = Lot_ID, y = Value)) +\n  geom_jitter(\n    aes(color = Group, alpha = Wafer_No),\n    width = 0.18,\n    size = 2.5\n  ) +\n  geom_hline(\n    data = mean_dt[Group == \"Reference\"],\n    aes(yintercept = Mean_Val),\n    color = \"#1f77b4\",\n    linetype = \"dashed\",\n    linewidth = 0.9\n  ) +\n  geom_hline(\n    data = mean_dt[Group == \"Target\"],\n    aes(yintercept = Mean_Val),\n    color = \"#d62728\",\n    linetype = \"dashed\",\n    linewidth = 0.9\n  ) +\n  facet_wrap(~ MSR_Type, scales = \"free_y\", ncol = 3) +\n  scale_alpha_continuous(range = c(0.2, 1.0), name = \"Wafer No\") +\n  theme_minimal(base_size = 13) +\n  theme(\n    axis.text.x = element_text(angle = 45, hjust = 1, face = \"bold\"),\n    panel.grid.major.x = element_blank(),\n    strip.text = element_text(face = \"bold\")\n  ) +\n  labs(\n    title = \"Same Group Mean Story, Different LOT Structure\",\n    subtitle = \"For BB-like MSRs, higher values indicate degradation. BB_MSR2 is driven by one LOT, while BB_MSR3 is group-wide.\",\n    x = \"LOT ID\",\n    y = \"BB-like MSR Value\"\n  )\n\n\n\n\n\n\n\n\n\n이 그림에서 BB_MSR2는 특히 중요하다. Target 그룹 평균선은 올라가 보일 수 있다. 하지만 LOT별 산점도를 보면 특정 LOT 하나에서 후반 Wafer가 치솟는다. 이건 group-wide degradation이라기보다 LOT-specific anomaly다.\n여기서 계층모델은 숫자를 어렵게 만드는 도구가 아니다. 그림으로 이미 보이는 구조를 모델 안에 정직하게 넣는 도구다.\n그리고 더 중요한 점은, 그림으로 보던 랏성을 숫자로 남길 수 있다는 것이다. 눈으로 보던 것을 지표화하면, 리뷰 기준이 더 일관되고, 자동화 가능성이 생긴다."
+  },
+  {
+    "objectID": "posts/2026-04-19-DRB-02/index.html#drb용-판정-프레임",
+    "href": "posts/2026-04-19-DRB-02/index.html#drb용-판정-프레임",
+    "title": "Semiconductor Data AB-Test #2",
+    "section": "14. DRB용 판정 프레임",
+    "text": "14. DRB용 판정 프레임\n그래서 나는 DRB에서 적어도 세 가지 질문을 분리해서 보려 한다.\n첫째, baseline 대비 얼마나 움직였는가? 둘째, 그 움직임이 LOT를 감안해도 남는가? 셋째, 혹시 특정 LOT 하나의 랏성인가?\n이 세 질문은 각각 다른 도구를 요구한다.\n\nmagnitude는 reference-anchored effect size가 볼 수 있다.\ngroup-wide effect는 mixed model fixed effect가 볼 수 있다.\nLOT-specific anomaly는 Max_Lot_Z 같은 LOT diagnostic이 볼 수 있다.\n\n즉, “BB 계열 MSR 평균이 올랐다”는 한 문장을 그대로 믿는 대신, 그 문장을 세 개의 통계 질문으로 찢어 보는 것이다.\n\\[\n\\text{Mean Shift}\n\\quad \\Rightarrow \\quad\n\\begin{cases}\n\\text{How large?} \\\\\n\\text{Group-wide?} \\\\\n\\text{Driven by one LOT?}\n\\end{cases}\n\\]\n이렇게 하면 DRB는 훨씬 덜 감으로 흘러간다. 평균 하나, p-value 하나로 사람을 설득하는 대신, 문제 구조 자체를 분해해서 보여주는 리뷰가 된다."
+  },
+  {
+    "objectID": "posts/2026-04-19-DRB-02/index.html#한계-계층모델은-설계를-대체하지-못한다",
+    "href": "posts/2026-04-19-DRB-02/index.html#한계-계층모델은-설계를-대체하지-못한다",
+    "title": "Semiconductor Data AB-Test #2",
+    "section": "15. 한계: 계층모델은 설계를 대체하지 못한다",
+    "text": "15. 한계: 계층모델은 설계를 대체하지 못한다\n여기서 정말 중요한 정직함이 하나 있다.\n계층모델은 LOT variation을 마법처럼 제거해 주는 도구가 아니다. 나쁜 설계를 깨끗하게 빨아주는 통계 세탁기가 아니다. 그런 세탁기 있으면 노벨상감인데, 아쉽게도 아직 인류는 거기까지 못 갔다.\n만약 reference 조건의 LOT들과 target 조건의 LOT들이 완전히 다른 집합이고, 같은 LOT 안에서 두 조건을 동시에 비교할 수 없다면, treatment effect와 LOT effect는 어느 정도 섞여 있다.\n\\[\nY_{ij} =\n\\beta_0\n+\n\\beta_1 T_i\n+\nu_i\n+\n\\varepsilon_{ij}\n\\]\n이 모델에서 우리가 알고 싶은 것은 \\(\\beta_1\\)이다. 하지만 \\(T_i\\)가 LOT 수준에서만 변하고, 각 LOT이 reference 또는 target 중 하나에만 속한다면, \\(\\beta_1\\)는 결국 LOT 간 차이 위에서 추정된다.\n따라서 LOT 수가 적거나 target 쪽에 우연히 큰 \\(u_i\\)를 가진 LOT이 몰리면, \\(\\hat\\beta_1\\)은 LOT imbalance의 영향을 받을 수 있다.\n이 말은 계층모델이 쓸모없다는 뜻이 아니다. 오히려 반대다.\n계층모델은 LOT variation을 없는 척하지 않는다. 그 variation을 모델 안으로 끌고 들어와서 uncertainty를 키우고, 특정 LOT가 과도하게 튀는지를 보여준다.\n하지만 완전히 confounded된 설계를 마법처럼 해소하지는 못한다.\n따라서 이상적인 설계는 가능한 한 여러 LOT에서 조건 효과가 반복되도록 데이터를 구성하는 것이다. 가능하다면 LOT을 block처럼 쓰거나, chamber/time/product 조건이 한쪽에 몰리지 않도록 균형을 맞추는 편이 좋다.\n현실의 DRB는 늘 이상적인 실험 설계처럼 움직이지 않는다. 하지만 적어도 계층모델을 쓰면, 우리가 무엇을 통제했고 무엇을 아직 통제하지 못했는지 더 정직하게 볼 수 있다.\n모델은 마법사가 아니다. 하지만 손전등 정도는 된다. 그리고 DRB에서는 손전등만 있어도 숨어 있던 LOT 귀신을 꽤 자주 찾아낸다."
+  },
+  {
+    "objectID": "posts/2026-04-19-DRB-02/index.html#결론-공정인가-lot인가",
+    "href": "posts/2026-04-19-DRB-02/index.html#결론-공정인가-lot인가",
+    "title": "Semiconductor Data AB-Test #2",
+    "section": "16. 결론: 공정인가, LOT인가",
+    "text": "16. 결론: 공정인가, LOT인가\nDRB에서 우리는 가능한 한 공정 B만 다른 비교를 만들려고 한다. A와 C를 통제하고, B만 POR와 변경 조건으로 나눠 보고 싶다.\n하지만 데이터는 항상 마지막 질문을 던진다.\n그 차이는 정말 공정 B 때문인가, 아니면 특정 LOT이 남긴 랏성인가?\n계층모델은 이 질문에 대한 완벽한 답은 아니다. 하지만 적어도 질문을 더 정확하게 만든다.\nWafer를 독립 점으로만 보던 시야에서 벗어나, LOT이라는 계층을 다시 모델 안으로 불러오는 것.\n그게 이 글에서 계층모델이 해준 일이다.\n1편에서 나는 이렇게 물었다.\n\n얼마나 움직였는가?\n\n이번 글에서는 이렇게 묻는다.\n\n누가 움직였는가? 공정인가, LOT인가?\n\n이 두 질문을 같이 봐야 DRB는 훨씬 단단해진다.\n그리고 하나 더. 우리가 지금까지 눈으로만 보던 랏성을, 이제는 통계적 지표로 남길 수 있다면 어떨까?\n그 순간 DRB는 단순 리뷰가 아니라, 현업 직관과 계층모델이 만나는 데이터 사이언스 문제가 된다."
+  },
+  {
+    "objectID": "posts/2026-04-19-DRB-02/index.html#appendix-a.-two-level-random-intercept-model",
+    "href": "posts/2026-04-19-DRB-02/index.html#appendix-a.-two-level-random-intercept-model",
+    "title": "Semiconductor Data AB-Test #2",
+    "section": "Appendix A. Two-Level Random-Intercept Model",
+    "text": "Appendix A. Two-Level Random-Intercept Model\n가장 단순한 two-level random-intercept model을 다음과 같이 쓰자.\n\\[\nY_{gij} =\n\\beta_0\n+\n\\beta_1 T_g\n+\nu_{gi}\n+\n\\varepsilon_{gij}\n\\]\n여기서 \\(g \\in {0,1}\\)는 reference/target group, \\(i\\)는 LOT, \\(j\\)는 Wafer를 뜻한다. \\(T_g\\)는 target indicator다.\n\\[\nT_g =\n\\begin{cases}\n0, & \\text{Reference} \\\\\n1, & \\text{Target}\n\\end{cases}\n\\]\n또한\n\\[\nu_{gi} \\overset{iid}{\\sim} N(0,\\tau^2),\n\\qquad\n\\varepsilon_{gij} \\overset{iid}{\\sim} N(0,\\sigma^2)\n\\]\n이고, \\(u_{gi}\\)와 \\(\\varepsilon_{gij}\\)는 서로 독립이라고 하자.\nLOT \\(i\\)에 속한 관측벡터를 \\(y_i \\in \\mathbb{R}^{m_i}\\)라고 두면,\n\\[\ny_i =\nX_i\\beta\n+\n\\mathbf{1}_{m_i}u_i\n+\n\\varepsilon_i\n\\]\n로 쓸 수 있다.\n따라서 marginal covariance는\n\\[\n\\mathrm{Var}(y_i \\mid X_i) =\n\\tau^2\\mathbf{1}_{m_i}\\mathbf{1}_{m_i}^{\\top}\n+\n\\sigma^2 I_{m_i}\n\\]\n가 된다.\n즉, 같은 LOT 안의 covariance matrix는 diagonal matrix가 아니라 compound symmetry 형태다. 같은 LOT 안의 서로 다른 두 Wafer \\(j \\neq k\\)에 대해\n\\[\n\\mathrm{Cov}(Y_{ij},Y_{ik}) = \\tau^2\n\\]\n이고,\n\\[\n\\mathrm{Var}(Y_{ij}) = \\tau^2+\\sigma^2\n\\]\n이다.\n이 구조가 바로 “같은 LOT 안의 Wafer는 독립이 아니다”를 수학적으로 표현한 것이다."
+  },
+  {
+    "objectID": "posts/2026-04-19-DRB-02/index.html#appendix-b.-icc와-design-effect의-도출",
+    "href": "posts/2026-04-19-DRB-02/index.html#appendix-b.-icc와-design-effect의-도출",
+    "title": "Semiconductor Data AB-Test #2",
+    "section": "Appendix B. ICC와 Design Effect의 도출",
+    "text": "Appendix B. ICC와 Design Effect의 도출\n위 모형에서 같은 LOT 내부의 intra-class correlation은\n\\[\n\\rho = \\frac{\\mathrm{Cov}(Y_{ij},Y_{ik})}{\\sqrt{\\mathrm{Var}(Y_{ij})\\mathrm{Var}(Y_{ik})}} = \\frac{\\tau^2}{\\tau^2+\\sigma^2}\n\\]\n이다.\n각 LOT에 Wafer가 동일하게 \\(m\\)개 있고, 전체 LOT 수가 \\(J\\)개라고 하자. 총 Wafer 수는\n\\[\nN=Jm\n\\]\n이다.\n전체 평균\n\\[\n\\bar Y =\n\\frac{1}{Jm}\n\\sum_{i=1}^{J}\n\\sum_{j=1}^{m}\nY_{ij}\n\\]\n의 분산은\n\\[\n\\mathrm{Var}(\\bar Y) =\n\\frac{\\tau^2}{J}\n+\n\\frac{\\sigma^2}{Jm}\n\\]\n이다.\n이를 \\(N=Jm\\)와 \\(\\rho\\)로 다시 쓰면,\n\\[\n\\mathrm{Var}(\\bar Y) =\n\\frac{\\tau^2+\\sigma^2}{N}\n\\left[\n1+(m-1)\\rho\n\\right]\n\\]\n가 된다.\n독립 표본이라고 착각했을 때의 naive variance는\n\\[\n\\mathrm{Var}_{\\mathrm{naive}}(\\bar Y) =\n\\frac{\\tau^2+\\sigma^2}{N}\n\\]\n이므로,\n\\[\n\\frac{\\mathrm{Var}(\\bar Y)}{\\mathrm{Var}_{\\mathrm{naive}}(\\bar Y)} = 1+(m-1)\\rho\n\\]\n이다.\n이 값이 design effect다.\n따라서 effective sample size는 대략\n\\[\nN_{\\mathrm{eff}}\n\\approx\n\\frac{N}{1+(m-1)\\rho}\n\\]\n로 볼 수 있다.\n이 식은 본문 메시지를 수학적으로 요약한다.\nLOT 내부 상관이 있으면, Wafer 수는 겉보기 표본수일 뿐이고 실제 정보량은 그보다 작다."
+  },
+  {
+    "objectID": "posts/2026-04-19-DRB-02/index.html#appendix-c.-treatment-effect와-lot-effect의-confounding",
+    "href": "posts/2026-04-19-DRB-02/index.html#appendix-c.-treatment-effect와-lot-effect의-confounding",
+    "title": "Semiconductor Data AB-Test #2",
+    "section": "Appendix C. Treatment Effect와 LOT Effect의 Confounding",
+    "text": "Appendix C. Treatment Effect와 LOT Effect의 Confounding\n공정 B 변경 효과를 나타내는 indicator를 \\(T_i\\)라고 하자.\n\\[\nY_{ij} =\n\\beta_0\n+\n\\beta_1 T_i\n+\nu_i\n+\n\\varepsilon_{ij}\n\\]\n우리가 알고 싶은 것은 \\(\\beta_1\\)이다.\n하지만 \\(T_i\\)가 LOT 수준에서만 변하고, 각 LOT이 reference 또는 target 중 하나에만 속한다면, treatment effect는 LOT 간 차이 위에서 추정된다.\n즉, 같은 LOT 안에서 reference와 target을 모두 관측할 수 없다면, LOT effect \\(u_i\\)와 treatment assignment \\(T_i\\)가 완전히 독립적으로 균형 잡혀 있다고 믿어야 한다.\n만약 target 쪽에 우연히 큰 \\(u_i\\)를 가진 LOT이 몰리면,\n\\[\n\\hat\\beta_1\n\\]\n은 공정 B 효과뿐 아니라 LOT imbalance의 영향을 받을 수 있다.\n이를 더 직관적으로 보면, 그룹 평균 차이는 다음처럼 쓸 수 있다.\n\\[\n\\bar Y_T-\\bar Y_R =\n\\beta_1\n+\n(\\bar u_T-\\bar u_R)\n+\n(\\bar\\varepsilon_T-\\bar\\varepsilon_R)\n\\]\n여기서\n\\[\n\\bar u_T-\\bar u_R\n\\]\n이 0에 가까우면 좋다. 하지만 LOT 수가 적거나 target 쪽 LOT들이 특이하게 높으면, 이 항이 무시할 수 없게 된다.\n즉, naive 평균 차이는\n\\[\n\\text{Process Effect}\n+\n\\text{LOT Imbalance}\n+\n\\text{Noise}\n\\]\n를 함께 본다.\n계층모델은 LOT variation을 모델링해 uncertainty를 반영하고, 특정 LOT anomaly를 드러내지만, 완전히 confounded된 설계를 마법처럼 해소하지는 못한다.\n이것이 “모델은 설계를 대체하지 못한다”는 말의 수학적 의미다."
+  },
+  {
+    "objectID": "posts/2026-04-19-DRB-02/index.html#appendix-d.-그룹-평균-차이의-진짜-분산과-naive-분산",
+    "href": "posts/2026-04-19-DRB-02/index.html#appendix-d.-그룹-평균-차이의-진짜-분산과-naive-분산",
+    "title": "Semiconductor Data AB-Test #2",
+    "section": "Appendix D. 그룹 평균 차이의 진짜 분산과 Naive 분산",
+    "text": "Appendix D. 그룹 평균 차이의 진짜 분산과 Naive 분산\n각 그룹 \\(g \\in {R,T}\\)에 \\(J_g\\)개의 LOT가 있고, 각 LOT에 동일하게 \\(m\\)개의 Wafer가 있다고 하자.\n그룹 평균은\n\\[\n\\bar Y_g =\n\\frac{1}{J_gm}\n\\sum_{i=1}^{J_g}\n\\sum_{j=1}^{m}\nY_{gij}\n\\]\n이다.\ngroup effect estimator는\n\\[\n\\hat\\beta_1 =\n\\bar Y_T-\\bar Y_R\n\\]\n로 쓸 수 있다.\nrandom-intercept 구조 하에서\n\\[\n\\mathrm{Var}(\\bar Y_g) =\n\\frac{\\tau^2}{J_g}\n+\n\\frac{\\sigma^2}{J_gm}\n\\]\n이므로,\n\\[\n\\mathrm{Var}(\\hat\\beta_1) =\n\\tau^2\n\\left(\n\\frac{1}{J_R}+\\frac{1}{J_T}\n\\right)\n+\n\\sigma^2\n\\left(\n\\frac{1}{J_Rm}+\\frac{1}{J_Tm}\n\\right)\n\\]\n이다.\n반면 Wafer를 모두 독립이라고 잘못 취급하면 naive variance는\n\\[\n\\mathrm{Var}_{\\mathrm{naive}}(\\hat\\beta_1) =\n(\\tau^2+\\sigma^2)\n\\left(\n\\frac{1}{J_Rm}+\\frac{1}{J_Tm}\n\\right)\n\\]\n가 된다.\nbalanced case, 즉 \\(J_R=J_T=J\\)이면 실제 분산과 naive 분산의 비는 다시\n\\[\n1+(m-1)\\rho\n\\]\n가 된다.\n이 식은 아주 중요한 실무적 결론을 준다.\n\nLOT 수 \\(J_R,J_T\\)는 between-lot effect의 정밀도에 직접 들어간다.\nLOT당 Wafer 수 \\(m\\)은 within-lot noise만 줄여준다.\n\\(\\tau^2\\), 즉 LOT-to-LOT variation이 크면 Wafer 수만 늘려서는 group effect의 불확실성이 충분히 줄지 않는다.\n\n즉, 랏성이 큰 문제에서는 “Wafer를 더 보자”보다 “LOT를 더 보자”가 더 강한 실험 설계일 수 있다."
+  },
+  {
+    "objectID": "posts/2026-04-19-DRB-02/index.html#appendix-e.-blup의-닫힌-형태와-shrinkage",
+    "href": "posts/2026-04-19-DRB-02/index.html#appendix-e.-blup의-닫힌-형태와-shrinkage",
+    "title": "Semiconductor Data AB-Test #2",
+    "section": "Appendix E. BLUP의 닫힌 형태와 Shrinkage",
+    "text": "Appendix E. BLUP의 닫힌 형태와 Shrinkage\nbalanced random-intercept model에서 LOT별 random effect의 conditional mean, 즉 BLUP는 비교적 깔끔하게 쓸 수 있다.\nLOT \\(i\\)의 평균잔차를\n\\[\nr_i =\n\\bar Y_{i\\cdot} - x_i^\\top \\hat\\beta\n\\]\n라고 두자. 그러면\n\\[\nr_i =\nu_i+\\bar\\varepsilon_i\n\\]\n이고,\n\\[\n\\bar\\varepsilon_i\n\\sim\nN\\left(0,\\frac{\\sigma^2}{m_i}\\right)\n\\]\n이다.\n사전분포는\n\\[\nu_i \\sim N(0,\\tau^2)\n\\]\n이다.\n정규-정규 conjugacy에 의해\n\\[\nu_i \\mid r_i\n\\sim\nN\\left(\n\\lambda_i r_i,\n\\frac{\\tau^2\\sigma^2}{\\sigma^2+m_i\\tau^2}\n\\right)\n\\]\n가 되며, shrinkage factor는\n\\[\n\\lambda_i =\n\\frac{\\tau^2}{\\tau^2+\\sigma^2/m_i} = \\frac{m_i\\tau^2}{m_i\\tau^2+\\sigma^2}\n\\]\n이다.\n따라서\n\\[\n\\hat u_i^{\\mathrm{BLUP}} =\n\\lambda_i r_i\n\\]\n가 된다.\n이 식은 BLUP의 핵심을 잘 보여준다.\n\n\\(m_i\\)가 작거나 \\(\\sigma^2\\)가 크면 \\(\\lambda_i\\)가 작아진다. → noisy한 LOT는 강하게 shrink된다.\n\\(m_i\\)가 크고 \\(\\tau^2\\)가 크면 \\(\\lambda_i\\)가 1에 가까워진다. → 정보가 충분한 LOT는 자기 평균잔차를 더 많이 유지한다.\n\n즉, ranef()가 주는 값은 raw LOT mean residual이 아니라, variance ratio와 sample size를 반영한 shrinkage estimator다."
+  },
+  {
+    "objectID": "posts/2026-04-19-DRB-02/index.html#appendix-f.-max_lot_z를-더-엄밀하게-쓰는-방법",
+    "href": "posts/2026-04-19-DRB-02/index.html#appendix-f.-max_lot_z를-더-엄밀하게-쓰는-방법",
+    "title": "Semiconductor Data AB-Test #2",
+    "section": "Appendix F. Max_Lot_Z를 더 엄밀하게 쓰는 방법",
+    "text": "Appendix F. Max_Lot_Z를 더 엄밀하게 쓰는 방법\n본문에서는 단순화를 위해 ranef() 값들을 다시 표준화한 heuristic으로 Max_Lot_Z를 설명했다.\n\\[\nZ_i =\n\\frac{\\hat u_i-\\bar u}{s_u}\n\\]\n\\[\n\\mathrm{Max\\_Lot\\_Z} =\n\\max_i |Z_i|\n\\]\n하지만 수리적으로 더 자연스러운 표준화는 conditional standard deviation을 쓰는 것이다.\nAppendix E의 결과에서\n\\[\n\\mathrm{Var}(u_i \\mid y) =\n\\frac{\\tau^2\\sigma^2}{\\sigma^2+m_i\\tau^2} = \\tau^2(1-\\lambda_i)\n\\]\n이므로, 더 엄밀한 standardized LOT diagnostic은\n\\[\nZ_i^{\\mathrm{cond}} =\n\\frac{\\hat u_i^{\\mathrm{BLUP}}}\n{\\sqrt{\\mathrm{Var}(u_i \\mid y)}}\n\\]\n로 둘 수 있다.\n따라서 master-level 진단치는\n\\[\n\\mathrm{Max\\_Lot\\_Z}^{\\ast} =\n\\max_i\n\\left|\nZ_i^{\\mathrm{cond}}\n\\right|\n\\]\n처럼 정의할 수 있다.\nbalanced design에서는 모든 \\(m_i\\)가 같으므로 단순 z-scoring과 순위가 비슷할 수 있다. 하지만 LOT size가 불균형하거나 결측이 있으면, conditional variance를 반영한 표준화가 더 타당하다.\n다만 이것도 formal multiple-testing procedure로 바로 해석하면 안 된다. LOT 수가 적고 random-effect variance도 추정량이기 때문에, \\(Z_i^{\\mathrm{cond}}\\)는 엄밀한 표준정규 검정통계량이라기보다 model-based diagnostic score에 가깝다.\n통계는 늘 이렇게 속삭인다.\n\n좋은 점수야. 하지만 p-value인 척하지는 마.\n\n얄미운데 맞는 말이다."
+  },
+  {
+    "objectID": "posts/2026-04-19-DRB-02/index.html#appendix-g.-random-slope로-가면-무엇이-달라지는가",
+    "href": "posts/2026-04-19-DRB-02/index.html#appendix-g.-random-slope로-가면-무엇이-달라지는가",
+    "title": "Semiconductor Data AB-Test #2",
+    "section": "Appendix G. Random Slope로 가면 무엇이 달라지는가",
+    "text": "Appendix G. Random Slope로 가면 무엇이 달라지는가\nrandom intercept model은 LOT마다 baseline level만 다를 수 있다고 본다. 하지만 실제 현장에서는 drift slope 자체가 LOT마다 다를 수 있다.\n예를 들어 Wafer 번호를 \\(t_{ij}\\)라고 하자. 특정 LOT는 후반 Wafer로 갈수록 수치가 점점 나빠질 수 있다. 이 경우 모형은 다음처럼 확장된다.\n\\[\nY_{ij} =\n\\beta_0\n+\n\\beta_1 T_i\n+\n\\beta_2 t_{ij}\n+\n\\beta_3 T_i t_{ij}\n+\nb_{0i}\n+\nb_{1i}t_{ij}\n+\n\\varepsilon_{ij}\n\\]\n여기서\n\\[\n\\begin{pmatrix}\nb_{0i}\\\\\nb_{1i}\n\\end{pmatrix}\n\\sim\nN\n\\left(\n\\begin{pmatrix}\n0\\\\\n0\n\\end{pmatrix},\n\\begin{pmatrix}\n\\tau_0^2 & \\tau_{01}\\\\\n\\tau_{01} & \\tau_1^2\n\\end{pmatrix}\n\\right)\n\\]\n이다.\n이 모형은 LOT마다 다음을 허용한다.\n\nbaseline level이 다를 수 있다.\nWafer 번호에 따른 drift slope가 다를 수 있다.\n높은 LOT일수록 drift도 큰지 같은 intercept-slope correlation도 볼 수 있다.\n\n즉, random intercept가 “어떤 LOT가 높게 시작했는가”를 본다면, random slope는 “어떤 LOT가 더 빠르게 무너지는가”를 본다.\n이번 글이 one hot LOT를 보는 글이라면, 다음 글은 one drifting LOT를 보는 글이 될 수 있다."
+  },
+  {
+    "objectID": "posts/2026-04-19-DRB-02/index.html#appendix-h.-mixed-model-inference에-대한-한-줄-정리",
+    "href": "posts/2026-04-19-DRB-02/index.html#appendix-h.-mixed-model-inference에-대한-한-줄-정리",
+    "title": "Semiconductor Data AB-Test #2",
+    "section": "Appendix H. Mixed Model Inference에 대한 한 줄 정리",
+    "text": "Appendix H. Mixed Model Inference에 대한 한 줄 정리\nmixed model에서\n\\[\n\\frac{\\hat\\beta_1}{\\widehat{SE}(\\hat\\beta_1)}\n\\]\n꼴의 Wald statistic은 large-sample에서는 정규 근사를 기대할 수 있다. 하지만 finite sample에서는 고전적인 t 분포와 정확히 일치하지 않는다.\n그래서 실무에서는 역할을 나누는 편이 좋다.\n\nscreening: Wald-type \\(t\\) value\nformal inference: likelihood ratio test, confidence interval, parametric bootstrap, Satterthwaite/Kenward-Roger 근사\nanomaly search: Max_Lot_Z 또는 conditional random-effect diagnostic\nengineering review: LOT history, chamber history, Wafer map, temporal drift 확인\n\n즉, mixed model에서는 “숫자가 나왔다”와 “분포가 정확히 알려졌다”를 같은 말로 취급하면 안 된다.\n모델은 지도다. 지도는 길을 알려주지만, 현장에 나가서 도로가 진짜 막혔는지는 확인해야 한다."
+  },
+  {
+    "objectID": "posts/2026-04-19-DRB-02/index.html#appendix-i.-최종-요약",
+    "href": "posts/2026-04-19-DRB-02/index.html#appendix-i.-최종-요약",
+    "title": "Semiconductor Data AB-Test #2",
+    "section": "Appendix I. 최종 요약",
+    "text": "Appendix I. 최종 요약\n이 글의 수리통계 버전을 한 줄로 줄이면 이렇다.\n\\[\n\\textbf{Wrong unit of analysis}\n\\Rightarrow\n\\textbf{false degradation signal by LOT variation}\n\\]\nWafer를 전부 독립 샘플처럼 세면, 특정 LOT의 랏성이 공정 B의 열화 신호처럼 보일 수 있다.\n계층모델은 그 평균 뒤에 숨어 있던 구조를 꺼내 준다.\n\\[\n\\text{Process Effect}\n+\n\\text{LOT Effect}\n+\n\\text{Wafer Noise}\n\\]\n이 세 가지를 분리해서 보게 만드는 것. 그리고 눈으로만 보던 랏성을 숫자로 남기게 만드는 것.\n그게 이 글에서 계층모델이 해준 일이다."
   }
 ]

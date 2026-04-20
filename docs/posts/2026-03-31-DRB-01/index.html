@@ -723,7 +723,7 @@ document.addEventListener("DOMContentLoaded", async function() {
 
     const listingsRaw = await listingsRes.json();
 
-    const listingObj = listingsRaw.find(l => l.listing === "/index.html" || l.listing === "index.html" || l.listing === "/");
+    const listingObj = listingsRaw.find(l => l.listing === "/posts.html" || l.listing === "posts.html" || l.listing === "/index.html" || l.listing === "index.html" || l.listing === "/");
 
     if (!listingObj || !listingObj.items) return;
 
