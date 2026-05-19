@@ -71,6 +71,35 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="../../styles.css">
 </head>
@@ -160,10 +189,31 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">목차</h2>
    
   <ul>
-  <li><a href="#시리즈-소개" id="toc-시리즈-소개" class="nav-link active" data-scroll-target="#시리즈-소개">시리즈 소개</a></li>
-  <li><a href="#목차" id="toc-목차" class="nav-link" data-scroll-target="#목차">목차</a></li>
-  <li><a href="#공부-규칙" id="toc-공부-규칙" class="nav-link" data-scroll-target="#공부-규칙">공부 규칙</a></li>
-  <li><a href="#참고-자료" id="toc-참고-자료" class="nav-link" data-scroll-target="#참고-자료">참고 자료</a></li>
+  <li><a href="#section" id="toc-section" class="nav-link active" data-scroll-target="#section"></a></li>
+  <li><a href="#학습-방향" id="toc-학습-방향" class="nav-link" data-scroll-target="#학습-방향">학습 방향</a></li>
+  <li><a href="#전체-전략" id="toc-전체-전략" class="nav-link" data-scroll-target="#전체-전략">전체 전략</a></li>
+  <li><a href="#phase-1.-확률론-핵심-압축" id="toc-phase-1.-확률론-핵심-압축" class="nav-link" data-scroll-target="#phase-1.-확률론-핵심-압축">Phase 1. 확률론 핵심 압축</a>
+  <ul class="collapse">
+  <li><a href="#강.-random-variable과-계층-생성구조" id="toc-강.-random-variable과-계층-생성구조" class="nav-link" data-scroll-target="#강.-random-variable과-계층-생성구조">1강. Random Variable과 계층 생성구조</a></li>
+  <li><a href="#강.-conditional-expectation과-conditional-independence" id="toc-강.-conditional-expectation과-conditional-independence" class="nav-link" data-scroll-target="#강.-conditional-expectation과-conditional-independence">2강. Conditional Expectation과 Conditional Independence</a></li>
+  <li><a href="#강.-total-variance와-covariance-decomposition" id="toc-강.-total-variance와-covariance-decomposition" class="nav-link" data-scroll-target="#강.-total-variance와-covariance-decomposition">3강. Total Variance와 Covariance Decomposition</a></li>
+  </ul></li>
+  <li><a href="#phase-2.-계층모델-본편" id="toc-phase-2.-계층모델-본편" class="nav-link" data-scroll-target="#phase-2.-계층모델-본편">Phase 2. 계층모델 본편</a>
+  <ul class="collapse">
+  <li><a href="#강.-normal-normal-hierarchical-model" id="toc-강.-normal-normal-hierarchical-model" class="nav-link" data-scroll-target="#강.-normal-normal-hierarchical-model">4강. Normal-Normal Hierarchical Model</a></li>
+  <li><a href="#강.-marginal-distribution과-icc" id="toc-강.-marginal-distribution과-icc" class="nav-link" data-scroll-target="#강.-marginal-distribution과-icc">5강. Marginal Distribution과 ICC</a></li>
+  <li><a href="#강.-partial-pooling과-shrinkage" id="toc-강.-partial-pooling과-shrinkage" class="nav-link" data-scroll-target="#강.-partial-pooling과-shrinkage">6강. Partial Pooling과 Shrinkage</a></li>
+  <li><a href="#강.-blup과-empirical-bayes" id="toc-강.-blup과-empirical-bayes" class="nav-link" data-scroll-target="#강.-blup과-empirical-bayes">7강. BLUP과 Empirical Bayes</a></li>
+  <li><a href="#강.-linear-mixed-model" id="toc-강.-linear-mixed-model" class="nav-link" data-scroll-target="#강.-linear-mixed-model">8강. Linear Mixed Model</a></li>
+  <li><a href="#강.-mle와-reml" id="toc-강.-mle와-reml" class="nav-link" data-scroll-target="#강.-mle와-reml">9강. MLE와 REML</a></li>
+  </ul></li>
+  <li><a href="#phase-3.-drbwafer-data-응용" id="toc-phase-3.-drbwafer-data-응용" class="nav-link" data-scroll-target="#phase-3.-drbwafer-data-응용">Phase 3. DRB/Wafer Data 응용</a>
+  <ul class="collapse">
+  <li><a href="#강.-drb를-위한-lot-wafer-계층모델" id="toc-강.-drb를-위한-lot-wafer-계층모델" class="nav-link" data-scroll-target="#강.-drb를-위한-lot-wafer-계층모델">10강. DRB를 위한 LOT-Wafer 계층모델</a></li>
+  <li><a href="#강.-drb를-계층적-evidence-decomposition으로-재해석" id="toc-강.-drb를-계층적-evidence-decomposition으로-재해석" class="nav-link" data-scroll-target="#강.-drb를-계층적-evidence-decomposition으로-재해석">11강. DRB를 계층적 Evidence Decomposition으로 재해석</a></li>
+  </ul></li>
+  <li><a href="#최종-커리큘럼-요약" id="toc-최종-커리큘럼-요약" class="nav-link" data-scroll-target="#최종-커리큘럼-요약">최종 커리큘럼 요약</a></li>
+  <li><a href="#한-줄-정리" id="toc-한-줄-정리" class="nav-link" data-scroll-target="#한-줄-정리">한 줄 정리</a></li>
   </ul>
 </nav>
     </div>
@@ -206,31 +256,260 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<section id="시리즈-소개" class="level2">
-<h2 class="anchored" data-anchor-id="시리즈-소개">시리즈 소개</h2>
-<!-- TODO: 이 시리즈를 왜 시작하는지 간단히 작성 -->
+<section id="section" class="level2">
+<h2 class="anchored" data-anchor-id="section"></h2>
 </section>
-<section id="목차" class="level2">
-<h2 class="anchored" data-anchor-id="목차">목차</h2>
-<ol type="1">
-<li>Multilevel Model 00: 목차 (이 글)</li>
-<li>Multilevel Model 01: <!-- TODO: 제목 입력 --></li>
-<li>Multilevel Model 02: <!-- TODO: 제목 입력 --></li>
-<li>Multilevel Model 03: <!-- TODO: 제목 입력 --></li>
-</ol>
+<section id="학습-방향" class="level1">
+<h1>학습 방향</h1>
+<p>이 커리큘럼의 목적은 계층모델을 수리통계 관점에서 깊게 이해하고, 이를 DRB, Wafer data, 반도체 데이터 구조론에 적용하는 것이다.</p>
+<p>따라서 measure-theoretic probability를 끝까지 파는 것이 목적은 아니다. 계층모델 이해에 필요한 확률론적 개념만 선별해서 압축적으로 다룬다.</p>
+<p><span class="math display">\[
+\boxed{
+\text{수리통계 핵심 뼈대는 깊게, 주변부는 과감히 압축한다.}
+}
+\]</span></p>
+<hr>
 </section>
-<section id="공부-규칙" class="level2">
-<h2 class="anchored" data-anchor-id="공부-규칙">공부 규칙</h2>
-<ul class="task-list">
-<li><label><input type="checkbox">각 글에서 연구 질문을 먼저 명시한다.</label></li>
-<li><label><input type="checkbox">모델 식은 기호 정의와 함께 적는다.</label></li>
-<li><label><input type="checkbox">해석은 “통계적 의미”와 “실무적 의미”를 분리해 쓴다.</label></li>
-<li><label><input type="checkbox">마지막에 다음 글 연결 포인트를 남긴다.</label></li>
-</ul>
+<section id="전체-전략" class="level1">
+<h1>전체 전략</h1>
+<pre class="text"><code>1. 확률론은 계층모델에 필요한 만큼만 빠르게 정리한다.
+2. Normal-normal hierarchy를 중심 모델로 오래 다룬다.
+3. Partial pooling과 shrinkage를 깊게 이해한다.
+4. BLUP, Empirical Bayes, LMM, REML로 확장한다.
+5. 마지막에 DRB/Wafer data 관점으로 재해석한다.</code></pre>
+<hr>
 </section>
-<section id="참고-자료" class="level2">
-<h2 class="anchored" data-anchor-id="참고-자료">참고 자료</h2>
-<!-- TODO: 교재/논문/문서 링크 정리 -->
+<section id="phase-1.-확률론-핵심-압축" class="level1">
+<h1>Phase 1. 확률론 핵심 압축</h1>
+<section id="강.-random-variable과-계층-생성구조" class="level2">
+<h2 class="anchored" data-anchor-id="강.-random-variable과-계층-생성구조">1강. Random Variable과 계층 생성구조</h2>
+<p>핵심 구조는 다음과 같다.</p>
+<p><span class="math display">\[
+\theta_j \sim G
+\]</span></p>
+<p><span class="math display">\[
+Y_{ij} \mid \theta_j \sim F(\theta_j)
+\]</span></p>
+<p>여기서 <span class="math inline">\(\theta_j\)</span>는 group-level parameter이고, <span class="math inline">\(Y_{ij}\)</span>는 group <span class="math inline">\(j\)</span> 안의 관측값이다.</p>
+<p>반도체 데이터에서는 <span class="math inline">\(\theta_j\)</span>를 LOT별 특성, <span class="math inline">\(Y_{ij}\)</span>를 해당 LOT 안의 Wafer 또는 Chip 관측값으로 볼 수 있다.</p>
+<hr>
+</section>
+<section id="강.-conditional-expectation과-conditional-independence" class="level2">
+<h2 class="anchored" data-anchor-id="강.-conditional-expectation과-conditional-independence">2강. Conditional Expectation과 Conditional Independence</h2>
+<p>계층모델의 첫 번째 핵심은 조건부 구조이다.</p>
+<p><span class="math display">\[
+E[Y \mid \theta_j]
+\]</span></p>
+<p><span class="math display">\[
+Y_{j1}, \dots, Y_{jm} \mid \theta_j
+\text{ are independent}
+\]</span></p>
+<p>같은 LOT 안의 Wafer들은 그냥 독립이 아니다. LOT 효과를 조건으로 주었을 때 독립처럼 볼 수 있다.</p>
+<p>핵심 문장은 다음과 같다.</p>
+<pre class="text"><code>LOT 효과를 알고 나면 Wafer들은 독립처럼 보이지만,
+LOT 효과를 모르면 서로 닮아 보인다.</code></pre>
+<hr>
+</section>
+<section id="강.-total-variance와-covariance-decomposition" class="level2">
+<h2 class="anchored" data-anchor-id="강.-total-variance와-covariance-decomposition">3강. Total Variance와 Covariance Decomposition</h2>
+<p>계층모델의 분산 구조는 total variance decomposition으로 이해할 수 있다.</p>
+<p><span class="math display">\[
+\mathrm{Var}(Y)
+=
+E[\mathrm{Var}(Y \mid \theta)]
++
+\mathrm{Var}(E[Y \mid \theta])
+\]</span></p>
+<p>이는 다음 구조로 해석된다.</p>
+<p><span class="math display">\[
+\text{total variation}
+=
+\text{within-group variation}
++
+\text{between-group variation}
+\]</span></p>
+<p>반도체 데이터에서는 다음과 같다.</p>
+<p><span class="math display">\[
+\text{전체 변동}
+=
+\text{Wafer-level noise}
++
+\text{LOT-level variation}
+\]</span></p>
+<p>이 분해가 계층모델의 핵심 출발점이다.</p>
+<hr>
+</section>
+</section>
+<section id="phase-2.-계층모델-본편" class="level1">
+<h1>Phase 2. 계층모델 본편</h1>
+<section id="강.-normal-normal-hierarchical-model" class="level2">
+<h2 class="anchored" data-anchor-id="강.-normal-normal-hierarchical-model">4강. Normal-Normal Hierarchical Model</h2>
+<p>가장 중요한 기본 모델은 다음이다.</p>
+<p><span class="math display">\[
+Y_{ij} \mid \theta_j \sim N(\theta_j, \sigma^2)
+\]</span></p>
+<p><span class="math display">\[
+\theta_j \sim N(\mu, \tau^2)
+\]</span></p>
+<p>여기서 <span class="math inline">\(\sigma^2\)</span>는 group 내부 변동, <span class="math inline">\(\tau^2\)</span>는 group 간 변동이다.</p>
+<p>반도체 데이터에서는 <span class="math inline">\(\sigma^2\)</span>를 Wafer-level noise, <span class="math inline">\(\tau^2\)</span>를 LOT-level variation으로 해석할 수 있다.</p>
+<hr>
+</section>
+<section id="강.-marginal-distribution과-icc" class="level2">
+<h2 class="anchored" data-anchor-id="강.-marginal-distribution과-icc">5강. Marginal Distribution과 ICC</h2>
+<p>Normal-normal hierarchy에서 주변분포는 다음과 같다.</p>
+<p><span class="math display">\[
+Y_{ij} \sim N(\mu, \tau^2 + \sigma^2)
+\]</span></p>
+<p>같은 group 안의 두 관측값 <span class="math inline">\(Y_{ij}\)</span>와 <span class="math inline">\(Y_{ik}\)</span>의 상관은 다음과 같다.</p>
+<p><span class="math display">\[
+\mathrm{Corr}(Y_{ij}, Y_{ik})
+=
+\frac{\tau^2}{\tau^2 + \sigma^2}
+\]</span></p>
+<p>이를 ICC라고 한다.</p>
+<p><span class="math display">\[
+\mathrm{ICC}
+=
+\frac{\tau^2}{\tau^2 + \sigma^2}
+\]</span></p>
+<p>ICC는 전체 변동 중 group-level variation이 차지하는 비율이다.</p>
+<hr>
+</section>
+<section id="강.-partial-pooling과-shrinkage" class="level2">
+<h2 class="anchored" data-anchor-id="강.-partial-pooling과-shrinkage">6강. Partial Pooling과 Shrinkage</h2>
+<p>계층모델의 핵심은 partial pooling이다.</p>
+<p><span class="math display">\[
+E[\theta_j \mid \bar{Y}_j]
+=
+\lambda_j \bar{Y}_j
++
+(1-\lambda_j)\mu
+\]</span></p>
+<p>여기서 <span class="math inline">\(\lambda_j\)</span>는 shrinkage factor이다.</p>
+<p>해석은 다음과 같다.</p>
+<pre class="text"><code>group 내부 표본 수가 작으면 전체 평균 쪽으로 더 당겨진다.
+group 내부 noise가 크면 전체 평균 쪽으로 더 당겨진다.
+group 간 차이가 크면 개별 group 평균을 더 유지한다.</code></pre>
+<p>반도체 데이터에서는 LOT별 평균을 그대로 믿지 않고, 전체 LOT 구조를 이용해 안정화된 LOT 효과를 추정하는 것으로 볼 수 있다.</p>
+<hr>
+</section>
+<section id="강.-blup과-empirical-bayes" class="level2">
+<h2 class="anchored" data-anchor-id="강.-blup과-empirical-bayes">7강. BLUP과 Empirical Bayes</h2>
+<p>LMM에서 random effect 추정값은 단순한 group 평균이 아니다.</p>
+<p>기본 구조는 다음과 같다.</p>
+<p><span class="math display">\[
+\hat{u}_j = \lambda_j r_j
+\]</span></p>
+<p>여기서 <span class="math inline">\(r_j\)</span>는 group-level residual이고, <span class="math inline">\(\lambda_j\)</span>는 shrinkage factor이다.</p>
+<p>따라서 <code>ranef()</code>로 얻는 LOT effect는 단순한 LOT 평균 차이가 아니라, 전체 계층구조와 분산 성분을 반영한 shrinkage 추정값이다.</p>
+<hr>
+</section>
+<section id="강.-linear-mixed-model" class="level2">
+<h2 class="anchored" data-anchor-id="강.-linear-mixed-model">8강. Linear Mixed Model</h2>
+<p>일반적인 linear mixed model은 다음과 같다.</p>
+<p><span class="math display">\[
+Y = X\beta + Zu + \varepsilon
+\]</span></p>
+<p><span class="math display">\[
+u \sim N(0, G)
+\]</span></p>
+<p><span class="math display">\[
+\varepsilon \sim N(0, R)
+\]</span></p>
+<p>따라서 주변분포는 다음과 같다.</p>
+<p><span class="math display">\[
+Y \sim N(X\beta, ZGZ^\top + R)
+\]</span></p>
+<p>계층구조가 존재하면 covariance matrix가 바뀐다. 따라서 fixed effect의 추정과 standard error도 달라진다.</p>
+<hr>
+</section>
+<section id="강.-mle와-reml" class="level2">
+<h2 class="anchored" data-anchor-id="강.-mle와-reml">9강. MLE와 REML</h2>
+<p>LMM에서는 fixed effect뿐 아니라 variance component도 추정해야 한다.</p>
+<p>핵심 추정 대상은 다음이다.</p>
+<p><span class="math display">\[
+\tau^2, \sigma^2
+\]</span></p>
+<p>주요 주제는 다음과 같다.</p>
+<pre class="text"><code>MLE
+REML
+profile likelihood
+variance component boundary issue
+small sample bias</code></pre>
+<p>REML은 fixed effect 추정에 사용된 자유도를 고려하여 variance component를 추정하는 방법이다.</p>
+<hr>
+</section>
+</section>
+<section id="phase-3.-drbwafer-data-응용" class="level1">
+<h1>Phase 3. DRB/Wafer Data 응용</h1>
+<section id="강.-drb를-위한-lot-wafer-계층모델" class="level2">
+<h2 class="anchored" data-anchor-id="강.-drb를-위한-lot-wafer-계층모델">10강. DRB를 위한 LOT-Wafer 계층모델</h2>
+<p>DRB 상황은 다음 모델로 표현할 수 있다.</p>
+<p><span class="math display">\[
+Y_{ij}
+=
+\beta_0
++
+\beta_1 T_i
++
+u_i
++
+\varepsilon_{ij}
+\]</span></p>
+<p>여기서 각 항의 의미는 다음과 같다.</p>
+<pre class="text"><code>β₀: baseline mean
+β₁: treatment 또는 공정 조건 효과
+Tᵢ: Ref/Target 또는 공정 조건 indicator
+uᵢ: LOT effect
+εᵢⱼ: Wafer-level noise</code></pre>
+<p>이 모델의 핵심 질문은 다음이다.</p>
+<pre class="text"><code>공정 조건 효과가 있는가?
+그 효과는 LOT variation을 보정한 뒤에도 남는가?
+특정 LOT 하나 때문에 효과가 있어 보이는 것은 아닌가?
+Wafer-level noise와 LOT-level variation은 어떻게 분리되는가?</code></pre>
+<hr>
+</section>
+<section id="강.-drb를-계층적-evidence-decomposition으로-재해석" class="level2">
+<h2 class="anchored" data-anchor-id="강.-drb를-계층적-evidence-decomposition으로-재해석">11강. DRB를 계층적 Evidence Decomposition으로 재해석</h2>
+<p>DRB는 단순한 두 집단 평균 비교가 아니다. 계층모델 관점에서는 evidence를 다음과 같이 분해한다.</p>
+<pre class="text"><code>1. 평균이 얼마나 움직였는가?
+2. 어느 계층에서 움직였는가?
+3. LOT 간 variation인가?
+4. Wafer-level noise인가?
+5. 특정 LOT 하나가 결론을 지배하는가?
+6. 여러 LOT에서 반복적으로 나타나는 효과인가?</code></pre>
+<p>따라서 DRB는 단순 A/B test가 아니라 계층적 evidence decomposition 문제로 볼 수 있다.</p>
+<hr>
+</section>
+</section>
+<section id="최종-커리큘럼-요약" class="level1">
+<h1>최종 커리큘럼 요약</h1>
+<pre class="text"><code>Phase 1. 확률론 핵심 압축
+  1강. Random Variable과 계층 생성구조
+  2강. Conditional Expectation과 Conditional Independence
+  3강. Total Variance와 Covariance Decomposition
+
+Phase 2. 계층모델 본편
+  4강. Normal-Normal Hierarchical Model
+  5강. Marginal Distribution과 ICC
+  6강. Partial Pooling과 Shrinkage
+  7강. BLUP과 Empirical Bayes
+  8강. Linear Mixed Model
+  9강. MLE와 REML
+
+Phase 3. DRB/Wafer Data 응용
+  10강. DRB를 위한 LOT-Wafer 계층모델
+  11강. DRB를 계층적 Evidence Decomposition으로 재해석</code></pre>
+<hr>
+</section>
+<section id="한-줄-정리" class="level1">
+<h1>한 줄 정리</h1>
+<p><span class="math display">\[
+\boxed{
+\text{확률론은 압축하고, Normal-normal hierarchy와 shrinkage를 중심으로 계층모델을 깊게 공부한다.}
+}
+\]</span></p>
 
 
 </section>

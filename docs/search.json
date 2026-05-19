@@ -439,5 +439,82 @@
     "title": "Multilevel Model 00: 목차",
     "section": "참고 자료",
     "text": "참고 자료"
+  },
+  {
+    "objectID": "posts/2026-05-19-MLM-00/index.html#강.-random-variable과-계층-생성구조",
+    "href": "posts/2026-05-19-MLM-00/index.html#강.-random-variable과-계층-생성구조",
+    "title": "Multilevel Model 00: 목차",
+    "section": "1강. Random Variable과 계층 생성구조",
+    "text": "1강. Random Variable과 계층 생성구조\n핵심 구조는 다음과 같다.\n\\[\n\\theta_j \\sim G\n\\]\n\\[\nY_{ij} \\mid \\theta_j \\sim F(\\theta_j)\n\\]\n여기서 \\(\\theta_j\\)는 group-level parameter이고, \\(Y_{ij}\\)는 group \\(j\\) 안의 관측값이다.\n반도체 데이터에서는 \\(\\theta_j\\)를 LOT별 특성, \\(Y_{ij}\\)를 해당 LOT 안의 Wafer 또는 Chip 관측값으로 볼 수 있다."
+  },
+  {
+    "objectID": "posts/2026-05-19-MLM-00/index.html#강.-conditional-expectation과-conditional-independence",
+    "href": "posts/2026-05-19-MLM-00/index.html#강.-conditional-expectation과-conditional-independence",
+    "title": "Multilevel Model 00: 목차",
+    "section": "2강. Conditional Expectation과 Conditional Independence",
+    "text": "2강. Conditional Expectation과 Conditional Independence\n계층모델의 첫 번째 핵심은 조건부 구조이다.\n\\[\nE[Y \\mid \\theta_j]\n\\]\n\\[\nY_{j1}, \\dots, Y_{jm} \\mid \\theta_j\n\\text{ are independent}\n\\]\n같은 LOT 안의 Wafer들은 그냥 독립이 아니다. LOT 효과를 조건으로 주었을 때 독립처럼 볼 수 있다.\n핵심 문장은 다음과 같다.\nLOT 효과를 알고 나면 Wafer들은 독립처럼 보이지만,\nLOT 효과를 모르면 서로 닮아 보인다."
+  },
+  {
+    "objectID": "posts/2026-05-19-MLM-00/index.html#강.-total-variance와-covariance-decomposition",
+    "href": "posts/2026-05-19-MLM-00/index.html#강.-total-variance와-covariance-decomposition",
+    "title": "Multilevel Model 00: 목차",
+    "section": "3강. Total Variance와 Covariance Decomposition",
+    "text": "3강. Total Variance와 Covariance Decomposition\n계층모델의 분산 구조는 total variance decomposition으로 이해할 수 있다.\n\\[\n\\mathrm{Var}(Y)\n=\nE[\\mathrm{Var}(Y \\mid \\theta)]\n+\n\\mathrm{Var}(E[Y \\mid \\theta])\n\\]\n이는 다음 구조로 해석된다.\n\\[\n\\text{total variation}\n=\n\\text{within-group variation}\n+\n\\text{between-group variation}\n\\]\n반도체 데이터에서는 다음과 같다.\n\\[\n\\text{전체 변동}\n=\n\\text{Wafer-level noise}\n+\n\\text{LOT-level variation}\n\\]\n이 분해가 계층모델의 핵심 출발점이다."
+  },
+  {
+    "objectID": "posts/2026-05-19-MLM-00/index.html#강.-normal-normal-hierarchical-model",
+    "href": "posts/2026-05-19-MLM-00/index.html#강.-normal-normal-hierarchical-model",
+    "title": "Multilevel Model 00: 목차",
+    "section": "4강. Normal-Normal Hierarchical Model",
+    "text": "4강. Normal-Normal Hierarchical Model\n가장 중요한 기본 모델은 다음이다.\n\\[\nY_{ij} \\mid \\theta_j \\sim N(\\theta_j, \\sigma^2)\n\\]\n\\[\n\\theta_j \\sim N(\\mu, \\tau^2)\n\\]\n여기서 \\(\\sigma^2\\)는 group 내부 변동, \\(\\tau^2\\)는 group 간 변동이다.\n반도체 데이터에서는 \\(\\sigma^2\\)를 Wafer-level noise, \\(\\tau^2\\)를 LOT-level variation으로 해석할 수 있다."
+  },
+  {
+    "objectID": "posts/2026-05-19-MLM-00/index.html#강.-marginal-distribution과-icc",
+    "href": "posts/2026-05-19-MLM-00/index.html#강.-marginal-distribution과-icc",
+    "title": "Multilevel Model 00: 목차",
+    "section": "5강. Marginal Distribution과 ICC",
+    "text": "5강. Marginal Distribution과 ICC\nNormal-normal hierarchy에서 주변분포는 다음과 같다.\n\\[\nY_{ij} \\sim N(\\mu, \\tau^2 + \\sigma^2)\n\\]\n같은 group 안의 두 관측값 \\(Y_{ij}\\)와 \\(Y_{ik}\\)의 상관은 다음과 같다.\n\\[\n\\mathrm{Corr}(Y_{ij}, Y_{ik})\n=\n\\frac{\\tau^2}{\\tau^2 + \\sigma^2}\n\\]\n이를 ICC라고 한다.\n\\[\n\\mathrm{ICC}\n=\n\\frac{\\tau^2}{\\tau^2 + \\sigma^2}\n\\]\nICC는 전체 변동 중 group-level variation이 차지하는 비율이다."
+  },
+  {
+    "objectID": "posts/2026-05-19-MLM-00/index.html#강.-partial-pooling과-shrinkage",
+    "href": "posts/2026-05-19-MLM-00/index.html#강.-partial-pooling과-shrinkage",
+    "title": "Multilevel Model 00: 목차",
+    "section": "6강. Partial Pooling과 Shrinkage",
+    "text": "6강. Partial Pooling과 Shrinkage\n계층모델의 핵심은 partial pooling이다.\n\\[\nE[\\theta_j \\mid \\bar{Y}_j]\n=\n\\lambda_j \\bar{Y}_j\n+\n(1-\\lambda_j)\\mu\n\\]\n여기서 \\(\\lambda_j\\)는 shrinkage factor이다.\n해석은 다음과 같다.\ngroup 내부 표본 수가 작으면 전체 평균 쪽으로 더 당겨진다.\ngroup 내부 noise가 크면 전체 평균 쪽으로 더 당겨진다.\ngroup 간 차이가 크면 개별 group 평균을 더 유지한다.\n반도체 데이터에서는 LOT별 평균을 그대로 믿지 않고, 전체 LOT 구조를 이용해 안정화된 LOT 효과를 추정하는 것으로 볼 수 있다."
+  },
+  {
+    "objectID": "posts/2026-05-19-MLM-00/index.html#강.-blup과-empirical-bayes",
+    "href": "posts/2026-05-19-MLM-00/index.html#강.-blup과-empirical-bayes",
+    "title": "Multilevel Model 00: 목차",
+    "section": "7강. BLUP과 Empirical Bayes",
+    "text": "7강. BLUP과 Empirical Bayes\nLMM에서 random effect 추정값은 단순한 group 평균이 아니다.\n기본 구조는 다음과 같다.\n\\[\n\\hat{u}_j = \\lambda_j r_j\n\\]\n여기서 \\(r_j\\)는 group-level residual이고, \\(\\lambda_j\\)는 shrinkage factor이다.\n따라서 ranef()로 얻는 LOT effect는 단순한 LOT 평균 차이가 아니라, 전체 계층구조와 분산 성분을 반영한 shrinkage 추정값이다."
+  },
+  {
+    "objectID": "posts/2026-05-19-MLM-00/index.html#강.-linear-mixed-model",
+    "href": "posts/2026-05-19-MLM-00/index.html#강.-linear-mixed-model",
+    "title": "Multilevel Model 00: 목차",
+    "section": "8강. Linear Mixed Model",
+    "text": "8강. Linear Mixed Model\n일반적인 linear mixed model은 다음과 같다.\n\\[\nY = X\\beta + Zu + \\varepsilon\n\\]\n\\[\nu \\sim N(0, G)\n\\]\n\\[\n\\varepsilon \\sim N(0, R)\n\\]\n따라서 주변분포는 다음과 같다.\n\\[\nY \\sim N(X\\beta, ZGZ^\\top + R)\n\\]\n계층구조가 존재하면 covariance matrix가 바뀐다. 따라서 fixed effect의 추정과 standard error도 달라진다."
+  },
+  {
+    "objectID": "posts/2026-05-19-MLM-00/index.html#강.-mle와-reml",
+    "href": "posts/2026-05-19-MLM-00/index.html#강.-mle와-reml",
+    "title": "Multilevel Model 00: 목차",
+    "section": "9강. MLE와 REML",
+    "text": "9강. MLE와 REML\nLMM에서는 fixed effect뿐 아니라 variance component도 추정해야 한다.\n핵심 추정 대상은 다음이다.\n\\[\n\\tau^2, \\sigma^2\n\\]\n주요 주제는 다음과 같다.\nMLE\nREML\nprofile likelihood\nvariance component boundary issue\nsmall sample bias\nREML은 fixed effect 추정에 사용된 자유도를 고려하여 variance component를 추정하는 방법이다."
+  },
+  {
+    "objectID": "posts/2026-05-19-MLM-00/index.html#강.-drb를-위한-lot-wafer-계층모델",
+    "href": "posts/2026-05-19-MLM-00/index.html#강.-drb를-위한-lot-wafer-계층모델",
+    "title": "Multilevel Model 00: 목차",
+    "section": "10강. DRB를 위한 LOT-Wafer 계층모델",
+    "text": "10강. DRB를 위한 LOT-Wafer 계층모델\nDRB 상황은 다음 모델로 표현할 수 있다.\n\\[\nY_{ij}\n=\n\\beta_0\n+\n\\beta_1 T_i\n+\nu_i\n+\n\\varepsilon_{ij}\n\\]\n여기서 각 항의 의미는 다음과 같다.\nβ₀: baseline mean\nβ₁: treatment 또는 공정 조건 효과\nTᵢ: Ref/Target 또는 공정 조건 indicator\nuᵢ: LOT effect\nεᵢⱼ: Wafer-level noise\n이 모델의 핵심 질문은 다음이다.\n공정 조건 효과가 있는가?\n그 효과는 LOT variation을 보정한 뒤에도 남는가?\n특정 LOT 하나 때문에 효과가 있어 보이는 것은 아닌가?\nWafer-level noise와 LOT-level variation은 어떻게 분리되는가?"
+  },
+  {
+    "objectID": "posts/2026-05-19-MLM-00/index.html#강.-drb를-계층적-evidence-decomposition으로-재해석",
+    "href": "posts/2026-05-19-MLM-00/index.html#강.-drb를-계층적-evidence-decomposition으로-재해석",
+    "title": "Multilevel Model 00: 목차",
+    "section": "11강. DRB를 계층적 Evidence Decomposition으로 재해석",
+    "text": "11강. DRB를 계층적 Evidence Decomposition으로 재해석\nDRB는 단순한 두 집단 평균 비교가 아니다. 계층모델 관점에서는 evidence를 다음과 같이 분해한다.\n1. 평균이 얼마나 움직였는가?\n2. 어느 계층에서 움직였는가?\n3. LOT 간 variation인가?\n4. Wafer-level noise인가?\n5. 특정 LOT 하나가 결론을 지배하는가?\n6. 여러 LOT에서 반복적으로 나타나는 효과인가?\n따라서 DRB는 단순 A/B test가 아니라 계층적 evidence decomposition 문제로 볼 수 있다."
   }
 ]
