@@ -1,0 +1,345 @@
+﻿---
+title: "Multilevel Model 00: 목차"
+description: "Multilevel Model study series table of contents"
+author: "Taejun Park"
+date: "2026-05-19"
+categories: [Statistics, Study, Multilevel Model]
+format:
+  html:
+    code-fold: true
+---
+
+## 
+
+# 학습 방향
+
+이 커리큘럼의 목적은 계층모델을 수리통계 관점에서 깊게 이해하고, 이를 DRB, Wafer data, 반도체 데이터 구조론에 적용하는 것이다.
+
+따라서 measure-theoretic probability를 끝까지 파는 것이 목적은 아니다. 계층모델 이해에 필요한 확률론적 개념만 선별해서 압축적으로 다룬다.
+
+$$
+\boxed{
+\text{수리통계 핵심 뼈대는 깊게, 주변부는 과감히 압축한다.}
+}
+$$
+
+------------------------------------------------------------------------
+
+# 전체 전략
+
+``` text
+1. 확률론은 계층모델에 필요한 만큼만 빠르게 정리한다.
+2. Normal-normal hierarchy를 중심 모델로 오래 다룬다.
+3. Partial pooling과 shrinkage를 깊게 이해한다.
+4. BLUP, Empirical Bayes, LMM, REML로 확장한다.
+5. 마지막에 DRB/Wafer data 관점으로 재해석한다.
+```
+
+------------------------------------------------------------------------
+
+# Phase 1. 확률론 핵심 압축
+
+## 1강. Random Variable과 계층 생성구조
+
+핵심 구조는 다음과 같다.
+
+$$
+\theta_j \sim G
+$$
+
+$$
+Y_{ij} \mid \theta_j \sim F(\theta_j)
+$$
+
+여기서 $\theta_j$는 group-level parameter이고, $Y_{ij}$는 group $j$ 안의 관측값이다.
+
+반도체 데이터에서는 $\theta_j$를 LOT별 특성, $Y_{ij}$를 해당 LOT 안의 Wafer 또는 Chip 관측값으로 볼 수 있다.
+
+------------------------------------------------------------------------
+
+## 2강. Conditional Expectation과 Conditional Independence
+
+계층모델의 첫 번째 핵심은 조건부 구조이다.
+
+$$
+E[Y \mid \theta_j]
+$$
+
+$$
+Y_{j1}, \dots, Y_{jm} \mid \theta_j
+\text{ are independent}
+$$
+
+같은 LOT 안의 Wafer들은 그냥 독립이 아니다. LOT 효과를 조건으로 주었을 때 독립처럼 볼 수 있다.
+
+핵심 문장은 다음과 같다.
+
+``` text
+LOT 효과를 알고 나면 Wafer들은 독립처럼 보이지만,
+LOT 효과를 모르면 서로 닮아 보인다.
+```
+
+------------------------------------------------------------------------
+
+## 3강. Total Variance와 Covariance Decomposition
+
+계층모델의 분산 구조는 total variance decomposition으로 이해할 수 있다.
+
+$$
+\mathrm{Var}(Y)
+=
+E[\mathrm{Var}(Y \mid \theta)]
++
+\mathrm{Var}(E[Y \mid \theta])
+$$
+
+이는 다음 구조로 해석된다.
+
+$$
+\text{total variation}
+=
+\text{within-group variation}
++
+\text{between-group variation}
+$$
+
+반도체 데이터에서는 다음과 같다.
+
+$$
+\text{전체 변동}
+=
+\text{Wafer-level noise}
++
+\text{LOT-level variation}
+$$
+
+이 분해가 계층모델의 핵심 출발점이다.
+
+------------------------------------------------------------------------
+
+# Phase 2. 계층모델 본편
+
+## 4강. Normal-Normal Hierarchical Model
+
+가장 중요한 기본 모델은 다음이다.
+
+$$
+Y_{ij} \mid \theta_j \sim N(\theta_j, \sigma^2)
+$$
+
+$$
+\theta_j \sim N(\mu, \tau^2)
+$$
+
+여기서 $\sigma^2$는 group 내부 변동, $\tau^2$는 group 간 변동이다.
+
+반도체 데이터에서는 $\sigma^2$를 Wafer-level noise, $\tau^2$를 LOT-level variation으로 해석할 수 있다.
+
+------------------------------------------------------------------------
+
+## 5강. Marginal Distribution과 ICC
+
+Normal-normal hierarchy에서 주변분포는 다음과 같다.
+
+$$
+Y_{ij} \sim N(\mu, \tau^2 + \sigma^2)
+$$
+
+같은 group 안의 두 관측값 $Y_{ij}$와 $Y_{ik}$의 상관은 다음과 같다.
+
+$$
+\mathrm{Corr}(Y_{ij}, Y_{ik})
+=
+\frac{\tau^2}{\tau^2 + \sigma^2}
+$$
+
+이를 ICC라고 한다.
+
+$$
+\mathrm{ICC}
+=
+\frac{\tau^2}{\tau^2 + \sigma^2}
+$$
+
+ICC는 전체 변동 중 group-level variation이 차지하는 비율이다.
+
+------------------------------------------------------------------------
+
+## 6강. Partial Pooling과 Shrinkage
+
+계층모델의 핵심은 partial pooling이다.
+
+$$
+E[\theta_j \mid \bar{Y}_j]
+=
+\lambda_j \bar{Y}_j
++
+(1-\lambda_j)\mu
+$$
+
+여기서 $\lambda_j$는 shrinkage factor이다.
+
+해석은 다음과 같다.
+
+``` text
+group 내부 표본 수가 작으면 전체 평균 쪽으로 더 당겨진다.
+group 내부 noise가 크면 전체 평균 쪽으로 더 당겨진다.
+group 간 차이가 크면 개별 group 평균을 더 유지한다.
+```
+
+반도체 데이터에서는 LOT별 평균을 그대로 믿지 않고, 전체 LOT 구조를 이용해 안정화된 LOT 효과를 추정하는 것으로 볼 수 있다.
+
+------------------------------------------------------------------------
+
+## 7강. BLUP과 Empirical Bayes
+
+LMM에서 random effect 추정값은 단순한 group 평균이 아니다.
+
+기본 구조는 다음과 같다.
+
+$$
+\hat{u}_j = \lambda_j r_j
+$$
+
+여기서 $r_j$는 group-level residual이고, $\lambda_j$는 shrinkage factor이다.
+
+따라서 `ranef()`로 얻는 LOT effect는 단순한 LOT 평균 차이가 아니라, 전체 계층구조와 분산 성분을 반영한 shrinkage 추정값이다.
+
+------------------------------------------------------------------------
+
+## 8강. Linear Mixed Model
+
+일반적인 linear mixed model은 다음과 같다.
+
+$$
+Y = X\beta + Zu + \varepsilon
+$$
+
+$$
+u \sim N(0, G)
+$$
+
+$$
+\varepsilon \sim N(0, R)
+$$
+
+따라서 주변분포는 다음과 같다.
+
+$$
+Y \sim N(X\beta, ZGZ^\top + R)
+$$
+
+계층구조가 존재하면 covariance matrix가 바뀐다. 따라서 fixed effect의 추정과 standard error도 달라진다.
+
+------------------------------------------------------------------------
+
+## 9강. MLE와 REML
+
+LMM에서는 fixed effect뿐 아니라 variance component도 추정해야 한다.
+
+핵심 추정 대상은 다음이다.
+
+$$
+\tau^2, \sigma^2
+$$
+
+주요 주제는 다음과 같다.
+
+``` text
+MLE
+REML
+profile likelihood
+variance component boundary issue
+small sample bias
+```
+
+REML은 fixed effect 추정에 사용된 자유도를 고려하여 variance component를 추정하는 방법이다.
+
+------------------------------------------------------------------------
+
+# Phase 3. DRB/Wafer Data 응용
+
+## 10강. DRB를 위한 LOT-Wafer 계층모델
+
+DRB 상황은 다음 모델로 표현할 수 있다.
+
+$$
+Y_{ij}
+=
+\beta_0
++
+\beta_1 T_i
++
+u_i
++
+\varepsilon_{ij}
+$$
+
+여기서 각 항의 의미는 다음과 같다.
+
+``` text
+β₀: baseline mean
+β₁: treatment 또는 공정 조건 효과
+Tᵢ: Ref/Target 또는 공정 조건 indicator
+uᵢ: LOT effect
+εᵢⱼ: Wafer-level noise
+```
+
+이 모델의 핵심 질문은 다음이다.
+
+``` text
+공정 조건 효과가 있는가?
+그 효과는 LOT variation을 보정한 뒤에도 남는가?
+특정 LOT 하나 때문에 효과가 있어 보이는 것은 아닌가?
+Wafer-level noise와 LOT-level variation은 어떻게 분리되는가?
+```
+
+------------------------------------------------------------------------
+
+## 11강. DRB를 계층적 Evidence Decomposition으로 재해석
+
+DRB는 단순한 두 집단 평균 비교가 아니다. 계층모델 관점에서는 evidence를 다음과 같이 분해한다.
+
+``` text
+1. 평균이 얼마나 움직였는가?
+2. 어느 계층에서 움직였는가?
+3. LOT 간 variation인가?
+4. Wafer-level noise인가?
+5. 특정 LOT 하나가 결론을 지배하는가?
+6. 여러 LOT에서 반복적으로 나타나는 효과인가?
+```
+
+따라서 DRB는 단순 A/B test가 아니라 계층적 evidence decomposition 문제로 볼 수 있다.
+
+------------------------------------------------------------------------
+
+# 최종 커리큘럼 요약
+
+``` text
+Phase 1. 확률론 핵심 압축
+  1강. Random Variable과 계층 생성구조
+  2강. Conditional Expectation과 Conditional Independence
+  3강. Total Variance와 Covariance Decomposition
+
+Phase 2. 계층모델 본편
+  4강. Normal-Normal Hierarchical Model
+  5강. Marginal Distribution과 ICC
+  6강. Partial Pooling과 Shrinkage
+  7강. BLUP과 Empirical Bayes
+  8강. Linear Mixed Model
+  9강. MLE와 REML
+
+Phase 3. DRB/Wafer Data 응용
+  10강. DRB를 위한 LOT-Wafer 계층모델
+  11강. DRB를 계층적 Evidence Decomposition으로 재해석
+```
+
+------------------------------------------------------------------------
+
+# 한 줄 정리
+
+$$
+\boxed{
+\text{확률론은 압축하고, Normal-normal hierarchy와 shrinkage를 중심으로 계층모델을 깊게 공부한다.}
+}
+$$

@@ -4,7 +4,7 @@
     "href": "posts.html",
     "title": "Posts",
     "section": "",
-    "text": "Semiconductor Data AB-Test #2\n\n\n\nStatistics\n\nData Science\n\nDRB\n\n\n\n계층 모델로 랏성(LOT Effect) 분석\n\n\n\n\n\nApr 19, 2026\n\n\nTaejun Park\n\n\n\n\n\n\n\n\n\n\n\n\nSemiconductor Data AB-Test #1\n\n\n\nStatistics\n\nData Science\n\nDRB\n\n\n\n반도체 데이터 AB-Test 지표 고찰\n\n\n\n\n\nMar 31, 2026\n\n\nTaejun Park\n\n\n\n\n\nNo matching items\n Back to top"
+    "text": "Multilevel Model 00: 목차\n\n\n\nStatistics\n\nStudy\n\nMultilevel Model\n\n\n\nMultilevel Model study series table of contents\n\n\n\n\n\nMay 19, 2026\n\n\nTaejun Park\n\n\n\n\n\n\n\n\n\n\n\n\nSemiconductor Data AB-Test #2\n\n\n\nStatistics\n\nData Science\n\nDRB\n\n\n\n계층 모델로 랏성(LOT Effect) 분석\n\n\n\n\n\nApr 19, 2026\n\n\nTaejun Park\n\n\n\n\n\n\n\n\n\n\n\n\nSemiconductor Data AB-Test #1\n\n\n\nStatistics\n\nData Science\n\nDRB\n\n\n\n반도체 데이터 AB-Test 지표 고찰\n\n\n\n\n\nMar 31, 2026\n\n\nTaejun Park\n\n\n\n\n\nNo matching items\n Back to top"
   },
   {
     "objectID": "about.html",
@@ -397,5 +397,47 @@
     "title": "Semiconductor Data AB-Test #2",
     "section": "Appendix E. Random Slope와 Mixed Model Inference",
     "text": "Appendix E. Random Slope와 Mixed Model Inference\nrandom intercept model은 LOT마다 baseline level만 다를 수 있다고 본다. 하지만 실제 현장에서는 drift slope 자체가 LOT마다 다를 수 있다.\n예를 들어 Wafer 번호를 \\(t_{ij}\\)라고 하자. 특정 LOT는 후반 Wafer로 갈수록 수치가 점점 나빠질 수 있다. 이 경우 모형은 다음처럼 확장된다.\n\\[\nY_{ij} =\n\\beta_0\n+\n\\beta_1 T_i\n+\n\\beta_2 t_{ij}\n+\n\\beta_3 T_i t_{ij}\n+\nb_{0i}\n+\nb_{1i}t_{ij}\n+\n\\varepsilon_{ij}\n\\]\n여기서\n\\[\n\\begin{pmatrix}\nb_{0i}\\\\\nb_{1i}\n\\end{pmatrix}\n\\sim\nN\n\\left(\n\\begin{pmatrix}\n0\\\\\n0\n\\end{pmatrix},\n\\begin{pmatrix}\n\\tau_0^2 & \\tau_{01}\\\\\n\\tau_{01} & \\tau_1^2\n\\end{pmatrix}\n\\right)\n\\]\n이다.\n이 모형은 LOT마다 다음을 허용한다.\n\nbaseline level이 다를 수 있다.\nWafer 번호에 따른 drift slope가 다를 수 있다.\n높은 LOT일수록 drift도 큰지 같은 intercept-slope correlation도 볼 수 있다.\n\n즉, random intercept가 “어떤 LOT가 높게 시작했는가”를 본다면, random slope는 “어떤 LOT가 더 빠르게 무너지는가”를 본다.\n이번 글이 one hot LOT를 보는 글이라면, 다음 글은 one drifting LOT를 보는 글이 될 수 있다.\nmixed model에서\n\\[\n\\frac{\\hat\\beta_1}{\\widehat{SE}(\\hat\\beta_1)}\n\\]\n꼴의 Wald statistic은 large-sample에서는 정규 근사를 기대할 수 있다. 하지만 finite sample에서는 고전적인 t 분포와 정확히 일치하지 않는다.\n그래서 실무에서는 역할을 나누는 편이 좋다.\n\nscreening: Wald-type \\(t\\) value\nformal inference: likelihood ratio test, confidence interval, parametric bootstrap, Satterthwaite/Kenward-Roger 근사\nanomaly search: Max_Lot_Z 또는 conditional random-effect diagnostic\nengineering review: LOT history, chamber history, Wafer map, temporal drift 확인\n\n즉, mixed model에서는 “숫자가 나왔다”와 “분포가 정확히 알려졌다”를 같은 말로 취급하면 안 된다.\n모델은 지도다. 지도는 길을 알려주지만, 현장에 나가서 도로가 진짜 막혔는지는 확인해야 한다."
+  },
+  {
+    "objectID": "posts/2026-05-19-multilevel-model0/index.html#목차",
+    "href": "posts/2026-05-19-multilevel-model0/index.html#목차",
+    "title": "Multilevel Model 0: 목차",
+    "section": "목차",
+    "text": "목차\n\nMultilevel Model 0: 목차 (이 글)\nMultilevel Model 1: \nMultilevel Model 2: \nMultilevel Model 3:"
+  },
+  {
+    "objectID": "posts/2026-05-19-multilevel-model0/index.html#공부-규칙",
+    "href": "posts/2026-05-19-multilevel-model0/index.html#공부-규칙",
+    "title": "Multilevel Model 0: 목차",
+    "section": "공부 규칙",
+    "text": "공부 규칙\n\n각 글에서 연구 질문을 먼저 명시한다.\n모델 식은 기호 정의와 함께 적는다.\n해석은 “통계적 의미”와 “실무적 의미”를 분리해 쓴다.\n마지막에 다음 글 연결 포인트를 남긴다."
+  },
+  {
+    "objectID": "posts/2026-05-19-multilevel-model0/index.html#참고-자료",
+    "href": "posts/2026-05-19-multilevel-model0/index.html#참고-자료",
+    "title": "Multilevel Model 0: 목차",
+    "section": "참고 자료",
+    "text": "참고 자료"
+  },
+  {
+    "objectID": "posts/2026-05-19-MLM-00/index.html#목차",
+    "href": "posts/2026-05-19-MLM-00/index.html#목차",
+    "title": "Multilevel Model 00: 목차",
+    "section": "목차",
+    "text": "목차\n\nMultilevel Model 00: 목차 (이 글)\nMultilevel Model 01: \nMultilevel Model 02: \nMultilevel Model 03:"
+  },
+  {
+    "objectID": "posts/2026-05-19-MLM-00/index.html#공부-규칙",
+    "href": "posts/2026-05-19-MLM-00/index.html#공부-규칙",
+    "title": "Multilevel Model 00: 목차",
+    "section": "공부 규칙",
+    "text": "공부 규칙\n\n각 글에서 연구 질문을 먼저 명시한다.\n모델 식은 기호 정의와 함께 적는다.\n해석은 “통계적 의미”와 “실무적 의미”를 분리해 쓴다.\n마지막에 다음 글 연결 포인트를 남긴다."
+  },
+  {
+    "objectID": "posts/2026-05-19-MLM-00/index.html#참고-자료",
+    "href": "posts/2026-05-19-MLM-00/index.html#참고-자료",
+    "title": "Multilevel Model 00: 목차",
+    "section": "참고 자료",
+    "text": "참고 자료"
   }
 ]
