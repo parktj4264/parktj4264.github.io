@@ -343,3 +343,17 @@ $$
 \text{확률론은 압축하고, Normal-normal hierarchy와 shrinkage를 중심으로 계층모델을 깊게 공부한다.}
 }
 $$
+
+# Appendix
+
+### Phase 1
+
+Appendix A. 표본평균의 분산과 유효 표본수
+
+Appendix B. Covariance, Correlation, ICC 보강
+
+Appendix C. Sigma-field와 조건부기대값 엄밀 버전
+
+Appendix D. Total Variance 증명
+
+Appendix E. Group 평균 분산과 design effect
