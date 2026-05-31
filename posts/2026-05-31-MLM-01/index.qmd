@@ -1,0 +1,586 @@
+﻿---
+title: "Multilevel Model 01: 확률론 기초"
+description: "Multilevel Model study note"
+author: "Taejun Park"
+date: "2026-05-31"
+categories: [Statistics, Study, Multilevel Model]
+format:
+  html:
+    code-fold: true
+---
+
+# 학습 방향
+
+이 글의 목적은 계층모델을 수리통계 관점에서 이해하기 위해 필요한 확률론적 개념만 압축적으로 정리하는 것이다.
+
+$$
+\boxed{
+\text{수리통계 핵심 뼈대는 깊게, 주변부는 과감히 압축한다.}
+}
+$$
+
+계층모델의 핵심은 다음 생성 구조에서 출발한다.
+
+$$
+\theta_j \sim G
+$$
+
+$$
+Y_{ij} \mid \theta_j \sim F(\theta_j)
+$$
+
+여기서 $\theta_j$는 group-level parameter이고, $Y_{ij}$는 group $j$ 안의 $i$번째 관측값이다.
+
+반도체 데이터에서는 다음처럼 볼 수 있다.
+
+$$
+\theta_j
+=
+\text{LOT }j\text{의 숨은 특성}
+$$
+
+$$
+Y_{ij}
+=
+\text{LOT }j\text{ 안의 Wafer 또는 Chip 관측값}
+$$
+
+------------------------------------------------------------------------
+
+# 1강. Random Variable과 계층 생성구조
+
+## 1. Random variable
+
+확률공간을
+
+$$
+(\Omega, \mathcal{F}, P)
+$$
+
+라고 하자.
+
+random variable $Y$는 다음과 같은 함수다.
+
+$$
+Y:\Omega \to \mathbb{R}
+$$
+
+즉, 하나의 현실 상태 $\omega \in \Omega$가 주어지면 관측값 $Y(\omega)$가 결정된다.
+
+계층모델에서는 관측값뿐 아니라 group-level parameter도 random variable로 본다.
+
+$$
+\Theta_j:\Omega \to \mathbb{R}
+$$
+
+$$
+Y_{ij}:\Omega \to \mathbb{R}
+$$
+
+------------------------------------------------------------------------
+
+## 2. 계층 생성구조
+
+일반적인 iid model은 다음과 같이 쓴다.
+
+$$
+Y_i \sim F(\theta)
+$$
+
+모든 관측값이 하나의 공통 parameter $\theta$를 공유한다.
+
+반면 계층모델은 다음과 같은 두 단계 구조를 가진다.
+
+$$
+\theta_j \sim G
+$$
+
+$$
+Y_{ij} \mid \theta_j \sim F(\theta_j)
+$$
+
+즉, group별 parameter $\theta_j$가 먼저 생성되고, 그 group 안의 관측값들이 $\theta_j$에 조건부로 생성된다.
+
+------------------------------------------------------------------------
+
+## 3. Normal-normal hierarchy의 기본형
+
+가장 기본적인 계층모델은 다음이다.
+
+$$
+Y_{ij} \mid \theta_j \sim N(\theta_j, \sigma^2)
+$$
+
+$$
+\theta_j \sim N(\mu, \tau^2)
+$$
+
+여기서
+
+$$
+\sigma^2
+=
+\text{within-group variation}
+$$
+
+$$
+\tau^2
+=
+\text{between-group variation}
+$$
+
+이다.
+
+반도체 데이터로 해석하면
+
+$$
+\sigma^2
+=
+\text{Wafer-level noise}
+$$
+
+$$
+\tau^2
+=
+\text{LOT-level variation}
+$$
+
+이다.
+
+------------------------------------------------------------------------
+
+# 2강. Conditional Expectation과 Conditional Independence
+
+## 1. Conditional expectation
+
+조건부 기대값
+
+$$
+E[Y \mid \Theta]
+$$
+
+는 $\Theta$를 알고 있을 때 $Y$를 예측하는 조건부 평균이다.
+
+normal-normal hierarchy에서
+
+$$
+Y_{ij} \mid \theta_j \sim N(\theta_j, \sigma^2)
+$$
+
+이므로
+
+$$
+E[Y_{ij} \mid \theta_j] = \theta_j
+$$
+
+이다.
+
+즉, group $j$의 숨은 평균 수준 $\theta_j$를 알고 있다면, group 안 관측값의 조건부 평균은 $\theta_j$다.
+
+반도체 데이터에서는
+
+$$
+E[Y_{ij} \mid \theta_j]
+=
+\theta_j
+$$
+
+를 다음처럼 읽을 수 있다.
+
+$$
+\text{LOT }j\text{의 평균 수준을 알고 있으면, 해당 LOT 안 Wafer의 조건부 평균은 그 LOT 평균이다.}
+$$
+
+------------------------------------------------------------------------
+
+## 2. Conditional independence
+
+계층모델의 핵심 조건부 구조는 다음이다.
+
+$$
+Y_{j1}, \dots, Y_{jm_j}
+\mid \theta_j
+\quad
+\text{are independent}
+$$
+
+즉,
+
+$$
+Y_{ji} \perp Y_{jk} \mid \theta_j
+\qquad (i \neq k)
+$$
+
+이다.
+
+하지만 이는 주변적으로 독립이라는 뜻이 아니다.
+
+일반적으로
+
+$$
+Y_{ji} \not\perp Y_{jk}
+$$
+
+이다.
+
+핵심은 다음 문장이다.
+
+$$
+\boxed{
+\text{조건부로는 독립이지만, 주변적으로는 독립이 아닐 수 있다.}
+}
+$$
+
+------------------------------------------------------------------------
+
+## 3. 왜 marginal dependence가 생기는가?
+
+normal-normal hierarchy에서
+
+$$
+Y_{j1} = \theta_j + \varepsilon_{j1}
+$$
+
+$$
+Y_{j2} = \theta_j + \varepsilon_{j2}
+$$
+
+라고 하자.
+
+여기서
+
+$$
+\varepsilon_{j1}, \varepsilon_{j2} \overset{ind}{\sim} N(0,\sigma^2)
+$$
+
+이고
+
+$$
+\theta_j \sim N(\mu,\tau^2)
+$$
+
+이다.
+
+$\theta_j$를 조건으로 주면 두 관측값은 서로 다른 noise만 가지므로 독립이다.
+
+$$
+Y_{j1} \perp Y_{j2} \mid \theta_j
+$$
+
+그러나 $\theta_j$를 모르면 두 관측값은 같은 group-level parameter $\theta_j$를 공유한다.
+
+따라서 marginal하게는 서로 닮는다.
+
+$$
+Y_{j1} \not\perp Y_{j2}
+$$
+
+반도체 데이터에서는 같은 LOT 안 Wafer들이 같은 LOT 효과를 공유하기 때문에 서로 닮는 것으로 해석할 수 있다.
+
+------------------------------------------------------------------------
+
+# 3강. Total Variance와 Covariance Decomposition
+
+## 1. Law of total expectation
+
+전체 평균은 조건부 평균의 평균이다.
+
+$$
+E[Y] = E[E(Y \mid \Theta)]
+$$
+
+normal-normal hierarchy에서
+
+$$
+E[Y_{ij} \mid \theta_j] = \theta_j
+$$
+
+이므로
+
+$$
+E[Y_{ij}]
+=
+E[E(Y_{ij} \mid \theta_j)]
+=
+E[\theta_j]
+=
+\mu
+$$
+
+이다.
+
+------------------------------------------------------------------------
+
+## 2. Law of total variance
+
+전체 분산은 다음과 같이 분해된다.
+
+$$
+\mathrm{Var}(Y)
+=
+E[\mathrm{Var}(Y \mid \Theta)]
++
+\mathrm{Var}(E[Y \mid \Theta])
+$$
+
+즉,
+
+$$
+\boxed{
+\text{total variation}
+=
+\text{within-group variation}
++
+\text{between-group variation}
+}
+$$
+
+normal-normal hierarchy에서
+
+$$
+\mathrm{Var}(Y_{ij} \mid \theta_j)
+=
+\sigma^2
+$$
+
+이므로
+
+$$
+E[\mathrm{Var}(Y_{ij} \mid \theta_j)]
+=
+\sigma^2
+$$
+
+또한
+
+$$
+E[Y_{ij} \mid \theta_j]
+=
+\theta_j
+$$
+
+이므로
+
+$$
+\mathrm{Var}(E[Y_{ij} \mid \theta_j])
+=
+\mathrm{Var}(\theta_j)
+=
+\tau^2
+$$
+
+따라서
+
+$$
+\mathrm{Var}(Y_{ij})
+=
+\sigma^2+\tau^2
+$$
+
+즉,
+
+$$
+\boxed{
+\mathrm{Var}(Y_{ij})
+=
+\underbrace{\sigma^2}_{\text{within-group}}
++
+\underbrace{\tau^2}_{\text{between-group}}
+}
+$$
+
+반도체 데이터에서는
+
+$$
+\boxed{
+\text{전체 변동}
+=
+\text{Wafer-level noise}
++
+\text{LOT-level variation}
+}
+$$
+
+이다.
+
+------------------------------------------------------------------------
+
+## 3. Law of total covariance
+
+두 관측값 $Y_1,Y_2$에 대해 다음이 성립한다.
+
+$$
+\mathrm{Cov}(Y_1,Y_2)
+=
+E[\mathrm{Cov}(Y_1,Y_2 \mid \Theta)]
++
+\mathrm{Cov}(E[Y_1 \mid \Theta], E[Y_2 \mid \Theta])
+$$
+
+같은 group 안 두 관측값 $Y_{j1},Y_{j2}$를 보자.
+
+조건부 독립성에 의해
+
+$$
+\mathrm{Cov}(Y_{j1},Y_{j2} \mid \theta_j) = 0
+$$
+
+이다.
+
+따라서 첫 번째 항은 0이다.
+
+$$
+E[\mathrm{Cov}(Y_{j1},Y_{j2} \mid \theta_j)] = 0
+$$
+
+두 번째 항은
+
+$$
+E[Y_{j1} \mid \theta_j] = \theta_j
+$$
+
+$$
+E[Y_{j2} \mid \theta_j] = \theta_j
+$$
+
+이므로
+
+$$
+\mathrm{Cov}(E[Y_{j1} \mid \theta_j], E[Y_{j2} \mid \theta_j])
+=
+\mathrm{Cov}(\theta_j,\theta_j)
+=
+\mathrm{Var}(\theta_j)
+=
+\tau^2
+$$
+
+따라서
+
+$$
+\mathrm{Cov}(Y_{j1},Y_{j2})
+=
+\tau^2
+$$
+
+------------------------------------------------------------------------
+
+## 4. ICC로 연결
+
+같은 group 안 두 관측값에 대해
+
+$$
+\mathrm{Cov}(Y_{j1},Y_{j2})
+=
+\tau^2
+$$
+
+이고,
+
+$$
+\mathrm{Var}(Y_{ji})
+=
+\tau^2+\sigma^2
+$$
+
+이다.
+
+따라서 같은 group 안 두 관측값의 marginal correlation은
+
+$$
+\mathrm{Corr}(Y_{j1},Y_{j2})
+=
+\frac{\tau^2}{\tau^2+\sigma^2}
+$$
+
+이다.
+
+이를 intra-class correlation, ICC라고 한다.
+
+$$
+\boxed{
+\mathrm{ICC}
+=
+\frac{\tau^2}{\tau^2+\sigma^2}
+}
+$$
+
+ICC는 다음과 같이 해석할 수 있다.
+
+$$
+\boxed{
+\mathrm{ICC}
+=
+\frac{\text{between-group variation}}
+{\text{between-group variation}+\text{within-group variation}}
+}
+$$
+
+반도체 데이터에서는
+
+$$
+\boxed{
+\mathrm{ICC}
+=
+\frac{\text{LOT-level variation}}
+{\text{LOT-level variation}+\text{Wafer-level noise}}
+}
+$$
+
+이다.
+
+------------------------------------------------------------------------
+
+# 핵심 요약
+
+계층모델의 기본 생성 구조는 다음이다.
+
+$$
+\theta_j \sim G
+$$
+
+$$
+Y_{ij} \mid \theta_j \sim F(\theta_j)
+$$
+
+normal-normal hierarchy에서는
+
+$$
+Y_{ij} \mid \theta_j \sim N(\theta_j,\sigma^2)
+$$
+
+$$
+\theta_j \sim N(\mu,\tau^2)
+$$
+
+이다.
+
+이때
+
+$$
+E[Y_{ij}] = \mu
+$$
+
+$$
+\mathrm{Var}(Y_{ij}) = \tau^2+\sigma^2
+$$
+
+$$
+\mathrm{Cov}(Y_{j1},Y_{j2}) = \tau^2
+$$
+
+$$
+\mathrm{Corr}(Y_{j1},Y_{j2})
+=
+\frac{\tau^2}{\tau^2+\sigma^2}
+$$
+
+이다.
+
+따라서 계층모델의 핵심은 다음 한 문장으로 요약할 수 있다.
+
+$$
+\boxed{
+\text{관측값의 변동은 group 내부 noise와 group 간 variation으로 분해된다.}
+}
+$$

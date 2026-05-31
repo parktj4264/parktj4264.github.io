@@ -4,7 +4,7 @@
     "href": "posts.html",
     "title": "Posts",
     "section": "",
-    "text": "Multilevel Model 00: 목차\n\n\n\nStatistics\n\nStudy\n\nMultilevel Model\n\n\n\nMultilevel Model study series table of contents\n\n\n\n\n\nMay 19, 2026\n\n\nTaejun Park\n\n\n\n\n\n\n\n\n\n\n\n\nSemiconductor Data AB-Test #2\n\n\n\nStatistics\n\nData Science\n\nDRB\n\n\n\n계층 모델로 랏성(LOT Effect) 분석\n\n\n\n\n\nApr 19, 2026\n\n\nTaejun Park\n\n\n\n\n\n\n\n\n\n\n\n\nSemiconductor Data AB-Test #1\n\n\n\nStatistics\n\nData Science\n\nDRB\n\n\n\n반도체 데이터 AB-Test 지표 고찰\n\n\n\n\n\nMar 31, 2026\n\n\nTaejun Park\n\n\n\n\n\nNo matching items\n Back to top"
+    "text": "Multilevel Model 01: 확률론 기초\n\n\n\nStatistics\n\nStudy\n\nMultilevel Model\n\n\n\nMultilevel Model study note\n\n\n\n\n\nMay 31, 2026\n\n\nTaejun Park\n\n\n\n\n\n\n\n\n\n\n\n\nMultilevel Model 00: 목차\n\n\n\nStatistics\n\nStudy\n\nMultilevel Model\n\n\n\nMultilevel Model study series table of contents\n\n\n\n\n\nMay 19, 2026\n\n\nTaejun Park\n\n\n\n\n\n\n\n\n\n\n\n\nSemiconductor Data AB-Test #2\n\n\n\nStatistics\n\nData Science\n\nDRB\n\n\n\n계층 모델로 랏성(LOT Effect) 분석\n\n\n\n\n\nApr 19, 2026\n\n\nTaejun Park\n\n\n\n\n\n\n\n\n\n\n\n\nSemiconductor Data AB-Test #1\n\n\n\nStatistics\n\nData Science\n\nDRB\n\n\n\n반도체 데이터 AB-Test 지표 고찰\n\n\n\n\n\nMar 31, 2026\n\n\nTaejun Park\n\n\n\n\n\nNo matching items\n Back to top"
   },
   {
     "objectID": "about.html",
@@ -516,5 +516,82 @@
     "title": "Multilevel Model 00: 목차",
     "section": "11강. DRB를 계층적 Evidence Decomposition으로 재해석",
     "text": "11강. DRB를 계층적 Evidence Decomposition으로 재해석\nDRB는 단순한 두 집단 평균 비교가 아니다. 계층모델 관점에서는 evidence를 다음과 같이 분해한다.\n1. 평균이 얼마나 움직였는가?\n2. 어느 계층에서 움직였는가?\n3. LOT 간 variation인가?\n4. Wafer-level noise인가?\n5. 특정 LOT 하나가 결론을 지배하는가?\n6. 여러 LOT에서 반복적으로 나타나는 효과인가?\n따라서 DRB는 단순 A/B test가 아니라 계층적 evidence decomposition 문제로 볼 수 있다."
+  },
+  {
+    "objectID": "posts/2026-05-31-MLM-01/index.html",
+    "href": "posts/2026-05-31-MLM-01/index.html",
+    "title": "Multilevel Model 01: 확률론 기초",
+    "section": "",
+    "text": "이 글의 목적은 계층모델을 수리통계 관점에서 이해하기 위해 필요한 확률론적 개념만 압축적으로 정리하는 것이다.\n\\[\n\\boxed{\n\\text{수리통계 핵심 뼈대는 깊게, 주변부는 과감히 압축한다.}\n}\n\\]\n계층모델의 핵심은 다음 생성 구조에서 출발한다.\n\\[\n\\theta_j \\sim G\n\\]\n\\[\nY_{ij} \\mid \\theta_j \\sim F(\\theta_j)\n\\]\n여기서 \\(\\theta_j\\)는 group-level parameter이고, \\(Y_{ij}\\)는 group \\(j\\) 안의 \\(i\\)번째 관측값이다.\n반도체 데이터에서는 다음처럼 볼 수 있다.\n\\[\n\\theta_j\n=\n\\text{LOT }j\\text{의 숨은 특성}\n\\]\n\\[\nY_{ij}\n=\n\\text{LOT }j\\text{ 안의 Wafer 또는 Chip 관측값}\n\\]"
+  },
+  {
+    "objectID": "posts/2026-05-31-MLM-01/index.html#random-variable",
+    "href": "posts/2026-05-31-MLM-01/index.html#random-variable",
+    "title": "Multilevel Model 01: 확률론 기초",
+    "section": "1. Random variable",
+    "text": "1. Random variable\n확률공간을\n\\[\n(\\Omega, \\mathcal{F}, P)\n\\]\n라고 하자.\nrandom variable \\(Y\\)는 다음과 같은 함수다.\n\\[\nY:\\Omega \\to \\mathbb{R}\n\\]\n즉, 하나의 현실 상태 \\(\\omega \\in \\Omega\\)가 주어지면 관측값 \\(Y(\\omega)\\)가 결정된다.\n계층모델에서는 관측값뿐 아니라 group-level parameter도 random variable로 본다.\n\\[\n\\Theta_j:\\Omega \\to \\mathbb{R}\n\\]\n\\[\nY_{ij}:\\Omega \\to \\mathbb{R}\n\\]"
+  },
+  {
+    "objectID": "posts/2026-05-31-MLM-01/index.html#계층-생성구조",
+    "href": "posts/2026-05-31-MLM-01/index.html#계층-생성구조",
+    "title": "Multilevel Model 01: 확률론 기초",
+    "section": "2. 계층 생성구조",
+    "text": "2. 계층 생성구조\n일반적인 iid model은 다음과 같이 쓴다.\n\\[\nY_i \\sim F(\\theta)\n\\]\n모든 관측값이 하나의 공통 parameter \\(\\theta\\)를 공유한다.\n반면 계층모델은 다음과 같은 두 단계 구조를 가진다.\n\\[\n\\theta_j \\sim G\n\\]\n\\[\nY_{ij} \\mid \\theta_j \\sim F(\\theta_j)\n\\]\n즉, group별 parameter \\(\\theta_j\\)가 먼저 생성되고, 그 group 안의 관측값들이 \\(\\theta_j\\)에 조건부로 생성된다."
+  },
+  {
+    "objectID": "posts/2026-05-31-MLM-01/index.html#normal-normal-hierarchy의-기본형",
+    "href": "posts/2026-05-31-MLM-01/index.html#normal-normal-hierarchy의-기본형",
+    "title": "Multilevel Model 01: 확률론 기초",
+    "section": "3. Normal-normal hierarchy의 기본형",
+    "text": "3. Normal-normal hierarchy의 기본형\n가장 기본적인 계층모델은 다음이다.\n\\[\nY_{ij} \\mid \\theta_j \\sim N(\\theta_j, \\sigma^2)\n\\]\n\\[\n\\theta_j \\sim N(\\mu, \\tau^2)\n\\]\n여기서\n\\[\n\\sigma^2\n=\n\\text{within-group variation}\n\\]\n\\[\n\\tau^2\n=\n\\text{between-group variation}\n\\]\n이다.\n반도체 데이터로 해석하면\n\\[\n\\sigma^2\n=\n\\text{Wafer-level noise}\n\\]\n\\[\n\\tau^2\n=\n\\text{LOT-level variation}\n\\]\n이다."
+  },
+  {
+    "objectID": "posts/2026-05-31-MLM-01/index.html#conditional-expectation",
+    "href": "posts/2026-05-31-MLM-01/index.html#conditional-expectation",
+    "title": "Multilevel Model 01: 확률론 기초",
+    "section": "1. Conditional expectation",
+    "text": "1. Conditional expectation\n조건부 기대값\n\\[\nE[Y \\mid \\Theta]\n\\]\n는 \\(\\Theta\\)를 알고 있을 때 \\(Y\\)를 예측하는 조건부 평균이다.\nnormal-normal hierarchy에서\n\\[\nY_{ij} \\mid \\theta_j \\sim N(\\theta_j, \\sigma^2)\n\\]\n이므로\n\\[\nE[Y_{ij} \\mid \\theta_j] = \\theta_j\n\\]\n이다.\n즉, group \\(j\\)의 숨은 평균 수준 \\(\\theta_j\\)를 알고 있다면, group 안 관측값의 조건부 평균은 \\(\\theta_j\\)다.\n반도체 데이터에서는\n\\[\nE[Y_{ij} \\mid \\theta_j]\n=\n\\theta_j\n\\]\n를 다음처럼 읽을 수 있다.\n\\[\n\\text{LOT }j\\text{의 평균 수준을 알고 있으면, 해당 LOT 안 Wafer의 조건부 평균은 그 LOT 평균이다.}\n\\]"
+  },
+  {
+    "objectID": "posts/2026-05-31-MLM-01/index.html#conditional-independence",
+    "href": "posts/2026-05-31-MLM-01/index.html#conditional-independence",
+    "title": "Multilevel Model 01: 확률론 기초",
+    "section": "2. Conditional independence",
+    "text": "2. Conditional independence\n계층모델의 핵심 조건부 구조는 다음이다.\n\\[\nY_{j1}, \\dots, Y_{jm_j}\n\\mid \\theta_j\n\\quad\n\\text{are independent}\n\\]\n즉,\n\\[\nY_{ji} \\perp Y_{jk} \\mid \\theta_j\n\\qquad (i \\neq k)\n\\]\n이다.\n하지만 이는 주변적으로 독립이라는 뜻이 아니다.\n일반적으로\n\\[\nY_{ji} \\not\\perp Y_{jk}\n\\]\n이다.\n핵심은 다음 문장이다.\n\\[\n\\boxed{\n\\text{조건부로는 독립이지만, 주변적으로는 독립이 아닐 수 있다.}\n}\n\\]"
+  },
+  {
+    "objectID": "posts/2026-05-31-MLM-01/index.html#왜-marginal-dependence가-생기는가",
+    "href": "posts/2026-05-31-MLM-01/index.html#왜-marginal-dependence가-생기는가",
+    "title": "Multilevel Model 01: 확률론 기초",
+    "section": "3. 왜 marginal dependence가 생기는가?",
+    "text": "3. 왜 marginal dependence가 생기는가?\nnormal-normal hierarchy에서\n\\[\nY_{j1} = \\theta_j + \\varepsilon_{j1}\n\\]\n\\[\nY_{j2} = \\theta_j + \\varepsilon_{j2}\n\\]\n라고 하자.\n여기서\n\\[\n\\varepsilon_{j1}, \\varepsilon_{j2} \\overset{ind}{\\sim} N(0,\\sigma^2)\n\\]\n이고\n\\[\n\\theta_j \\sim N(\\mu,\\tau^2)\n\\]\n이다.\n\\(\\theta_j\\)를 조건으로 주면 두 관측값은 서로 다른 noise만 가지므로 독립이다.\n\\[\nY_{j1} \\perp Y_{j2} \\mid \\theta_j\n\\]\n그러나 \\(\\theta_j\\)를 모르면 두 관측값은 같은 group-level parameter \\(\\theta_j\\)를 공유한다.\n따라서 marginal하게는 서로 닮는다.\n\\[\nY_{j1} \\not\\perp Y_{j2}\n\\]\n반도체 데이터에서는 같은 LOT 안 Wafer들이 같은 LOT 효과를 공유하기 때문에 서로 닮는 것으로 해석할 수 있다."
+  },
+  {
+    "objectID": "posts/2026-05-31-MLM-01/index.html#law-of-total-expectation",
+    "href": "posts/2026-05-31-MLM-01/index.html#law-of-total-expectation",
+    "title": "Multilevel Model 01: 확률론 기초",
+    "section": "1. Law of total expectation",
+    "text": "1. Law of total expectation\n전체 평균은 조건부 평균의 평균이다.\n\\[\nE[Y] = E[E(Y \\mid \\Theta)]\n\\]\nnormal-normal hierarchy에서\n\\[\nE[Y_{ij} \\mid \\theta_j] = \\theta_j\n\\]\n이므로\n\\[\nE[Y_{ij}]\n=\nE[E(Y_{ij} \\mid \\theta_j)]\n=\nE[\\theta_j]\n=\n\\mu\n\\]\n이다."
+  },
+  {
+    "objectID": "posts/2026-05-31-MLM-01/index.html#law-of-total-variance",
+    "href": "posts/2026-05-31-MLM-01/index.html#law-of-total-variance",
+    "title": "Multilevel Model 01: 확률론 기초",
+    "section": "2. Law of total variance",
+    "text": "2. Law of total variance\n전체 분산은 다음과 같이 분해된다.\n\\[\n\\mathrm{Var}(Y)\n=\nE[\\mathrm{Var}(Y \\mid \\Theta)]\n+\n\\mathrm{Var}(E[Y \\mid \\Theta])\n\\]\n즉,\n\\[\n\\boxed{\n\\text{total variation}\n=\n\\text{within-group variation}\n+\n\\text{between-group variation}\n}\n\\]\nnormal-normal hierarchy에서\n\\[\n\\mathrm{Var}(Y_{ij} \\mid \\theta_j)\n=\n\\sigma^2\n\\]\n이므로\n\\[\nE[\\mathrm{Var}(Y_{ij} \\mid \\theta_j)]\n=\n\\sigma^2\n\\]\n또한\n\\[\nE[Y_{ij} \\mid \\theta_j]\n=\n\\theta_j\n\\]\n이므로\n\\[\n\\mathrm{Var}(E[Y_{ij} \\mid \\theta_j])\n=\n\\mathrm{Var}(\\theta_j)\n=\n\\tau^2\n\\]\n따라서\n\\[\n\\mathrm{Var}(Y_{ij})\n=\n\\sigma^2+\\tau^2\n\\]\n즉,\n\\[\n\\boxed{\n\\mathrm{Var}(Y_{ij})\n=\n\\underbrace{\\sigma^2}_{\\text{within-group}}\n+\n\\underbrace{\\tau^2}_{\\text{between-group}}\n}\n\\]\n반도체 데이터에서는\n\\[\n\\boxed{\n\\text{전체 변동}\n=\n\\text{Wafer-level noise}\n+\n\\text{LOT-level variation}\n}\n\\]\n이다."
+  },
+  {
+    "objectID": "posts/2026-05-31-MLM-01/index.html#law-of-total-covariance",
+    "href": "posts/2026-05-31-MLM-01/index.html#law-of-total-covariance",
+    "title": "Multilevel Model 01: 확률론 기초",
+    "section": "3. Law of total covariance",
+    "text": "3. Law of total covariance\n두 관측값 \\(Y_1,Y_2\\)에 대해 다음이 성립한다.\n\\[\n\\mathrm{Cov}(Y_1,Y_2)\n=\nE[\\mathrm{Cov}(Y_1,Y_2 \\mid \\Theta)]\n+\n\\mathrm{Cov}(E[Y_1 \\mid \\Theta], E[Y_2 \\mid \\Theta])\n\\]\n같은 group 안 두 관측값 \\(Y_{j1},Y_{j2}\\)를 보자.\n조건부 독립성에 의해\n\\[\n\\mathrm{Cov}(Y_{j1},Y_{j2} \\mid \\theta_j) = 0\n\\]\n이다.\n따라서 첫 번째 항은 0이다.\n\\[\nE[\\mathrm{Cov}(Y_{j1},Y_{j2} \\mid \\theta_j)] = 0\n\\]\n두 번째 항은\n\\[\nE[Y_{j1} \\mid \\theta_j] = \\theta_j\n\\]\n\\[\nE[Y_{j2} \\mid \\theta_j] = \\theta_j\n\\]\n이므로\n\\[\n\\mathrm{Cov}(E[Y_{j1} \\mid \\theta_j], E[Y_{j2} \\mid \\theta_j])\n=\n\\mathrm{Cov}(\\theta_j,\\theta_j)\n=\n\\mathrm{Var}(\\theta_j)\n=\n\\tau^2\n\\]\n따라서\n\\[\n\\mathrm{Cov}(Y_{j1},Y_{j2})\n=\n\\tau^2\n\\]"
+  },
+  {
+    "objectID": "posts/2026-05-31-MLM-01/index.html#icc로-연결",
+    "href": "posts/2026-05-31-MLM-01/index.html#icc로-연결",
+    "title": "Multilevel Model 01: 확률론 기초",
+    "section": "4. ICC로 연결",
+    "text": "4. ICC로 연결\n같은 group 안 두 관측값에 대해\n\\[\n\\mathrm{Cov}(Y_{j1},Y_{j2})\n=\n\\tau^2\n\\]\n이고,\n\\[\n\\mathrm{Var}(Y_{ji})\n=\n\\tau^2+\\sigma^2\n\\]\n이다.\n따라서 같은 group 안 두 관측값의 marginal correlation은\n\\[\n\\mathrm{Corr}(Y_{j1},Y_{j2})\n=\n\\frac{\\tau^2}{\\tau^2+\\sigma^2}\n\\]\n이다.\n이를 intra-class correlation, ICC라고 한다.\n\\[\n\\boxed{\n\\mathrm{ICC}\n=\n\\frac{\\tau^2}{\\tau^2+\\sigma^2}\n}\n\\]\nICC는 다음과 같이 해석할 수 있다.\n\\[\n\\boxed{\n\\mathrm{ICC}\n=\n\\frac{\\text{between-group variation}}\n{\\text{between-group variation}+\\text{within-group variation}}\n}\n\\]\n반도체 데이터에서는\n\\[\n\\boxed{\n\\mathrm{ICC}\n=\n\\frac{\\text{LOT-level variation}}\n{\\text{LOT-level variation}+\\text{Wafer-level noise}}\n}\n\\]\n이다."
   }
 ]
